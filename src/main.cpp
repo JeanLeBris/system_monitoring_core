@@ -10,37 +10,37 @@
 #include "utils.hpp"
 
 int main(int argc, char** argv){
-    // std::cout << exec("wmic cpu get Loadpercentage");
+    // // std::cout << exec("wmic cpu get Loadpercentage");
     long long buffer = 0;
-    // std::cout << get_const_str_length("TotalPhysicalMemory    ") << "\n";
+    // // std::cout << get_const_str_length("TotalPhysicalMemory    ") << "\n";
     monitoring::System sys1 = monitoring::System();
 
     
-    char bar[4000]{};
+    // char bar[4000]{};
 
-    std::string result = exec("wmic logicaldisk get /VALUE");
-    // // result.copy(bar, 19, 23);
-    // result.copy(bar, 3999, 0);
-    // // std::cout << std::hex << bar;
-    // for(int i = 0; i < 4000; i++){
-    //     printf("/%d", bar[i]);
-    // }
+    // std::string result = exec("wmic logicaldisk get /VALUE");
+    // // // result.copy(bar, 19, 23);
+    // // result.copy(bar, 3999, 0);
+    // // // std::cout << std::hex << bar;
+    // // for(int i = 0; i < 4000; i++){
+    // //     printf("/%d", bar[i]);
+    // // }
 
-    converter::organized_data_array converted_result = converter::wmic_converter(result);
-    // std::cout << result;
-    converter::display_data(converted_result);
-    std::cout << converter::get_value_from_key(converted_result.data[0], "Access") << std::endl;
-    std::cout << converter::get_value_from_key(converted_result.data[0], "Accessl") << std::endl;
-    std::cout << converter::get_value_from_key(converted_result.data[0], "Availability") << std::endl;
-    std::cout << converter::get_value_from_key(converted_result.data[0], "Caption") << std::endl;
-    free(converted_result.data);
+    // converter::organized_data_array converted_result = converter::wmic_converter(result);
+    // // std::cout << result;
+    // converter::display_data(converted_result);
+    // std::cout << converter::get_value_from_key(converted_result.data[0], "Access") << std::endl;
+    // std::cout << converter::get_value_from_key(converted_result.data[0], "Accessl") << std::endl;
+    // std::cout << converter::get_value_from_key(converted_result.data[0], "Availability") << std::endl;
+    // std::cout << converter::get_value_from_key(converted_result.data[0], "Caption") << std::endl;
+    // free(converted_result.data);
 
-    // for(int i = 0; i < 5; i++){
-    //     buffer = sys1.get_ram_load_percentage();
+    for(int i = 0; i < 5; i++){
+        buffer = sys1.get_ram_load_percentage();
 
-    //     // std::cout << buffer;
-    //     printf("%lld\n", buffer);
-    // }
+        // std::cout << buffer;
+        printf("%lld\n", buffer);
+    }
 
     return 0;
 }

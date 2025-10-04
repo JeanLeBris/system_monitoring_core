@@ -4,6 +4,8 @@
 namespace monitoring{
     class System{
         private:
+        long long total_ram;
+
 
         public:
         System();
