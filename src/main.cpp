@@ -6,6 +6,8 @@
 #include <array>
 
 #include "monitoring.hpp"
+#include "output_converter.hpp"
+#include "utils.hpp"
 
 int main(int argc, char** argv){
     // std::cout << exec("wmic cpu get Loadpercentage");
@@ -13,12 +15,32 @@ int main(int argc, char** argv){
     // std::cout << get_const_str_length("TotalPhysicalMemory    ") << "\n";
     monitoring::System sys1 = monitoring::System();
 
-    for(int i = 0; i < 5; i++){
-        buffer = sys1.get_ram_load_percentage();
+    
+    char bar[4000]{};
 
-        // std::cout << buffer;
-        printf("%lld\n", buffer);
-    }
+    std::string result = exec("wmic logicaldisk get /VALUE");
+    // // result.copy(bar, 19, 23);
+    // result.copy(bar, 3999, 0);
+    // // std::cout << std::hex << bar;
+    // for(int i = 0; i < 4000; i++){
+    //     printf("/%d", bar[i]);
+    // }
+
+    converter::organized_data_array converted_result = converter::wmic_converter(result);
+    // std::cout << result;
+    converter::display_data(converted_result);
+    std::cout << converter::get_value_from_key(converted_result.data[0], "Access") << std::endl;
+    std::cout << converter::get_value_from_key(converted_result.data[0], "Accessl") << std::endl;
+    std::cout << converter::get_value_from_key(converted_result.data[0], "Availability") << std::endl;
+    std::cout << converter::get_value_from_key(converted_result.data[0], "Caption") << std::endl;
+    free(converted_result.data);
+
+    // for(int i = 0; i < 5; i++){
+    //     buffer = sys1.get_ram_load_percentage();
+
+    //     // std::cout << buffer;
+    //     printf("%lld\n", buffer);
+    // }
 
     return 0;
 }
