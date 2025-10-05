@@ -16,6 +16,16 @@ namespace monitoring{
         logical_disk_type* data;
     };
 
+    struct physical_disk_type{
+        std::string caption;
+        long long total_space;
+    };
+
+    struct physical_disk_array{
+        int size;
+        physical_disk_type* data;
+    };
+
     class System{
         private:
         long long cpu_load_percentage;
@@ -24,6 +34,8 @@ namespace monitoring{
         long long free_ram;
 
         logical_disk_array logical_disk;
+
+        physical_disk_array physical_disk;
 
 
         public:
@@ -39,6 +51,7 @@ namespace monitoring{
          * Returns the CPU load percentage in %
          */
         long long get_cpu_load_percentage();
+
 
         
         /**
@@ -57,6 +70,7 @@ namespace monitoring{
         long long get_ram_load_percentage();
 
 
+
         /**
          * Set the logical disks basic info
          */
@@ -70,7 +84,33 @@ namespace monitoring{
         /**
          * Returns the logical disks informations such as its ID, its volume name, its total space (in B) as well as its free space (in B)
          */
-        logical_disk_array get_basic_logical_disk_info();
+        logical_disk_array get_logical_disk_info();
+
+
+
+        /**
+         * Set the physical disks basic info
+         */
+        void update_basic_physical_disk_info();
+
+        /**
+         * Returns the physical disks informations such as its caption and its total space (in B)
+         */
+        physical_disk_array get_physical_disk_info();
+
+
+
+        /**
+         * Update the system's info
+         */
+        void update_info();
+
+
+
+        /**
+         * Display the system's information basically
+         */
+        void display_system_info();
     };
 }
 

@@ -1,3 +1,6 @@
+#include <iostream>
+#include <cmath>
+
 #include "monitoring.hpp"
 #include "output_converter.hpp"
 #include "utils.hpp"
@@ -10,6 +13,8 @@ namespace monitoring{
         this->update_free_ram();
 
         this->update_basic_logical_disk_info();
+
+        this->update_basic_physical_disk_info();
     }
 
     monitoring::System::~System(){
@@ -157,7 +162,49 @@ namespace monitoring{
     //     return result;
     // }
 
-    logical_disk_array monitoring::System::get_basic_logical_disk_info(){
+    logical_disk_array monitoring::System::get_logical_disk_info(){
         return this->logical_disk;
+    }
+
+    void monitoring::System::update_basic_physical_disk_info(){
+        converter::organized_data_array converted_result = converter::wmic_converter(exec("wmic diskdrive get /VALUE"));
+
+        this->physical_disk = {.size = 0, .data = NULL};
+
+        this->physical_disk.size = converted_result.size;
+        // result.data = (logical_disk_type*) malloc(result.size * sizeof(logical_disk_type));
+        this->physical_disk.data = new physical_disk_type[this->physical_disk.size];
+        for(int i = 0; i < this->physical_disk.size; i++){
+            this->physical_disk.data[i].caption = converter::get_value_from_key(converted_result.data[i], "Caption");
+            this->physical_disk.data[i].total_space = std::stoll(converter::get_value_from_key(converted_result.data[i], "Size"));
+        }
+
+        free(converted_result.data);
+    }
+
+    physical_disk_array monitoring::System::get_physical_disk_info(){
+        return this->physical_disk;
+    }
+
+    void monitoring::System::update_info(){
+        this->update_cpu_load_percentage();
+        this->update_free_ram();
+        this->update_logical_disk_info();
+    }
+
+    void monitoring::System::display_system_info(){
+        // std::cout << ;
+        std::cout << "CPU info" << std::endl;
+        std::cout << "\t" << this->get_cpu_load_percentage() << "%" << std::endl;
+        std::cout << "RAM info" << std::endl;
+        std::cout << "\t" << this->get_ram_load_percentage() << "%" << std::endl;
+        std::cout << "logical disk info" << std::endl;
+        for(int i = 0; i < this->get_logical_disk_info().size; i++){
+            std::cout << "\t" << this->get_logical_disk_info().data[i].id << this->get_logical_disk_info().data[i].volume_name << "\t" << this->get_logical_disk_info().data[i].total_space / std::pow(1024, 3) << "GB" << "\t" << this->get_logical_disk_info().data[i].free_space / std::pow(1024, 3) << "GB" << std::endl;
+        }
+        std::cout << "physical disk info" << std::endl;
+        for(int i = 0; i < this->get_physical_disk_info().size; i++){
+            std::cout << "\t" << this->get_physical_disk_info().data[i].caption << "\t" << this->get_physical_disk_info().data[i].total_space / std::pow(1024, 3) << "GB" << std::endl;
+        }
     }
 }

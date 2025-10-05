@@ -37,14 +37,17 @@ int main(int argc, char** argv){
     // free(converted_result.data);
 
     for(int i = 0; i < 5; i++){
-        // buffer1 = sys1.get_basic_logical_disk_info();
-        sys1.update_cpu_load_percentage();
-        buffer2 = sys1.get_cpu_load_percentage();
+        // // buffer1 = sys1.get_basic_logical_disk_info();
+        // sys1.update_cpu_load_percentage();
+        // buffer2 = sys1.get_cpu_load_percentage();
 
-        // std::cout << buffer;
-        // printf("%lld\n", buffer1.data[0].free_space);
-        printf("%lld\n", buffer2);
-        // delete[] buffer1.data;
+        // // std::cout << buffer;
+        // // printf("%lld\n", buffer1.data[0].free_space);
+        // printf("%lld\n", buffer2);
+        // // delete[] buffer1.data;
+
+        sys1.update_info();
+        sys1.display_system_info();
     }
     // free(buffer.data);
 
