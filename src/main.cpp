@@ -11,7 +11,8 @@
 
 int main(int argc, char** argv){
     // // std::cout << exec("wmic cpu get Loadpercentage");
-    long long buffer = 0;
+    monitoring::logical_disk_array buffer1 = {.size = 0, .data = NULL};
+    long long buffer2 = 0;
     // // std::cout << get_const_str_length("TotalPhysicalMemory    ") << "\n";
     monitoring::System sys1 = monitoring::System();
 
@@ -36,11 +37,16 @@ int main(int argc, char** argv){
     // free(converted_result.data);
 
     for(int i = 0; i < 5; i++){
-        buffer = sys1.get_ram_load_percentage();
+        // buffer1 = sys1.get_basic_logical_disk_info();
+        sys1.update_cpu_load_percentage();
+        buffer2 = sys1.get_cpu_load_percentage();
 
         // std::cout << buffer;
-        printf("%lld\n", buffer);
+        // printf("%lld\n", buffer1.data[0].free_space);
+        printf("%lld\n", buffer2);
+        // delete[] buffer1.data;
     }
+    // free(buffer.data);
 
     return 0;
 }
