@@ -2,12 +2,16 @@
 #define SYSTEM_MONITORING_MONITORING_HPP
 
 #include <string>
+#include <chrono>
 
 namespace monitoring{
     struct logical_disk_type{
         std::string id;
         std::string volume_name;
         long long total_space;
+        std::chrono::system_clock::time_point last_time;
+        long long last_free_space;
+        std::chrono::system_clock::time_point time;
         long long free_space;
     };
 

@@ -112,6 +112,8 @@ namespace monitoring{
 
     void monitoring::System::update_basic_logical_disk_info(){
         converter::organized_data_array converted_result = converter::wmic_converter(exec("wmic logicaldisk get /VALUE"));
+        // time_t req_time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+        std::chrono::system_clock::time_point req_time = std::chrono::system_clock::now();
 
         this->logical_disk = {.size = 0, .data = NULL};
 
@@ -119,10 +121,13 @@ namespace monitoring{
         // result.data = (logical_disk_type*) malloc(result.size * sizeof(logical_disk_type));
         this->logical_disk.data = new logical_disk_type[this->logical_disk.size];
         for(int i = 0; i < this->logical_disk.size; i++){
+            this->logical_disk.data[i].time = req_time;
+            this->logical_disk.data[i].last_time = this->logical_disk.data[i].time - std::chrono::seconds{1};
             this->logical_disk.data[i].id = converter::get_value_from_key(converted_result.data[i], "DeviceID");
             this->logical_disk.data[i].volume_name = converter::get_value_from_key(converted_result.data[i], "VolumeName");
             this->logical_disk.data[i].total_space = std::stoll(converter::get_value_from_key(converted_result.data[i], "Size"));
             this->logical_disk.data[i].free_space = std::stoll(converter::get_value_from_key(converted_result.data[i], "FreeSpace"));
+            this->logical_disk.data[i].last_free_space = this->logical_disk.data[i].free_space;
         }
 
         free(converted_result.data);
@@ -130,11 +135,16 @@ namespace monitoring{
 
     void monitoring::System::update_logical_disk_info(){
         converter::organized_data_array converted_result = converter::wmic_converter(exec("wmic logicaldisk get /VALUE"));
+        // time_t req_time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+        std::chrono::system_clock::time_point req_time = std::chrono::system_clock::now();
 
         for(int i = 0; i < converted_result.size; i++){
             for(int j = 0; j < this->logical_disk.size; j++){
                 if(converter::get_value_from_key(converted_result.data[i], "DeviceID") == this->logical_disk.data[j].id){
-                    this->logical_disk.data[j].free_space == std::stoll(converter::get_value_from_key(converted_result.data[i], "FreeSpace"));
+                    this->logical_disk.data[j].last_time = this->logical_disk.data[j].time;
+                    this->logical_disk.data[j].last_free_space = this->logical_disk.data[j].free_space;
+                    this->logical_disk.data[j].time = req_time;
+                    this->logical_disk.data[j].free_space = std::stoll(converter::get_value_from_key(converted_result.data[i], "FreeSpace"));
                 }
             }
         }
@@ -193,6 +203,8 @@ namespace monitoring{
     }
 
     void monitoring::System::display_system_info(){
+        std::chrono::duration<double> duration;
+
         // std::cout << ;
         std::cout << "CPU info" << std::endl;
         std::cout << "\t" << this->get_cpu_load_percentage() << "%" << std::endl;
@@ -200,7 +212,12 @@ namespace monitoring{
         std::cout << "\t" << this->get_ram_load_percentage() << "%" << std::endl;
         std::cout << "logical disk info" << std::endl;
         for(int i = 0; i < this->get_logical_disk_info().size; i++){
-            std::cout << "\t" << this->get_logical_disk_info().data[i].id << this->get_logical_disk_info().data[i].volume_name << "\t" << this->get_logical_disk_info().data[i].total_space / std::pow(1024, 3) << "GB" << "\t" << this->get_logical_disk_info().data[i].free_space / std::pow(1024, 3) << "GB" << std::endl;
+            duration = (this->get_logical_disk_info().data[i].time - this->get_logical_disk_info().data[i].last_time);
+            std::cout << "\t" << this->get_logical_disk_info().data[i].id;
+            std::cout << this->get_logical_disk_info().data[i].volume_name;
+            std::cout << "\t" << this->get_logical_disk_info().data[i].total_space / std::pow(1024, 3) << "GB";
+            std::cout << "\t" << (long long) this->get_logical_disk_info().data[i].free_space / std::pow(1024, 3) << "GB";
+            std::cout << "\t" << std::abs(this->get_logical_disk_info().data[i].free_space - this->get_logical_disk_info().data[i].last_free_space) / duration.count() << "B/s" << std::endl;
         }
         std::cout << "physical disk info" << std::endl;
         for(int i = 0; i < this->get_physical_disk_info().size; i++){

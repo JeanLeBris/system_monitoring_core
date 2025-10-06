@@ -4,6 +4,8 @@
 #include <stdexcept>
 #include <string>
 #include <array>
+#include <thread>
+#include <chrono>
 
 #include "monitoring.hpp"
 #include "output_converter.hpp"
@@ -36,7 +38,13 @@ int main(int argc, char** argv){
     // std::cout << converter::get_value_from_key(converted_result.data[0], "Caption") << std::endl;
     // free(converted_result.data);
 
-    for(int i = 0; i < 5; i++){
+    for(int i = 0; i < 10000; i++){
+        // std::this_thread::sleep_for(std::chrono::milliseconds{5000});
+
+        // std::cin.get();
+        // // std::scanf("");
+        // std::cout << exec("wmic logicaldisk get /VALUE") << std::endl;
+
         // // buffer1 = sys1.get_basic_logical_disk_info();
         // sys1.update_cpu_load_percentage();
         // buffer2 = sys1.get_cpu_load_percentage();
