@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstring>
+#include <filesystem>
 
 #include "output_converter.hpp"
 #include "utils.hpp"
@@ -203,6 +204,123 @@ namespace converter{
             }
 
             index++;
+        }
+
+        return output;
+    }
+
+    organized_data_array linux_diskstats_converter(std::string data){
+        organized_data_array output = {.size = 0, .data = NULL};
+
+        std::string iteration_string = data;
+        std::string string_element1;
+        std::string string_element2;
+        bool keep_going = true;
+        int space_pos = 0;
+        int nl_pos = 0;
+
+        char diskstats_data_types[14][40] = {"major number", "minor number", "device name", "reads completed successfully", "reads merged", "sectors read", "time spent reading",\
+            "writes completed", "writes merged", "sectors written", "time spent writing", "I/Os currently in progress", "time spent doing I/Os", "weighted time spent doing I/Os"};
+
+        while(keep_going){
+            if(iteration_string.begin() == iteration_string.end()){
+                keep_going = false;
+            }
+            else{
+                output.size++;
+                output.data = (organized_data*) realloc(output.data, output.size*sizeof(*output.data));
+                output.data[output.size-1].size = 14;
+
+                nl_pos = iteration_string.find("\n");
+                string_element1 = iteration_string.substr(0, nl_pos);
+                iteration_string = iteration_string.substr(nl_pos+1, iteration_string.length());
+                for(int i = 0; i < 14; i++){
+                    space_pos = string_element1.find(' ');
+                    string_element2 = string_element1.substr(0, space_pos);
+                    string_element1 = string_element1.substr(space_pos+1, string_element1.length());
+                    while(space_pos == 0){
+                        space_pos = string_element1.find(' ');
+                        string_element2 = string_element1.substr(0, space_pos);
+                        string_element1 = string_element1.substr(space_pos+1, string_element1.length());
+                    }
+
+                    std::strcpy(output.data[output.size-1].keys[i], diskstats_data_types[i]);
+                    std::strcpy(output.data[output.size-1].values[i], string_element2.c_str());
+                }
+            }
+        }
+
+        return output;
+    }
+
+    organized_data_array linux_sys_block_converter(){
+        organized_data_array output = {.size = 0, .data = NULL};
+
+        std::string pdisk_name;
+        std::string ldisk_name;
+        // int last_sep = 0;
+
+        int buffer_int = 0;
+        std::string buffer_string;
+
+        int iterator = 0;
+        for(auto const& dir_entry1 : std::filesystem::directory_iterator("/sys/block")){
+            pdisk_name = dir_entry1.path().filename();
+
+            buffer_string = exec("cat " + dir_entry1.path().string() + "/size");
+            buffer_int = buffer_string.find("\n");
+            buffer_string = buffer_string.substr(0, buffer_int);
+        
+            output.size++;
+            output.data = (organized_data*) realloc(output.data, output.size*sizeof(*output.data));
+            output.data[output.size-1].size = 3;
+
+            strcpy(output.data[iterator].keys[0], "type");
+            strcpy(output.data[iterator].values[0], "physical");
+            strcpy(output.data[iterator].keys[1], "name");
+            strcpy(output.data[iterator].values[1], pdisk_name.c_str());
+            strcpy(output.data[iterator].keys[2], "total_space");
+            strcpy(output.data[iterator].values[2], buffer_string.c_str());
+
+            iterator++;
+
+            for(auto const& dir_entry2 : std::filesystem::directory_iterator(dir_entry1)){
+                if(dir_entry2.path().filename().string().find(pdisk_name) != std::string::npos){
+                    ldisk_name = dir_entry2.path().filename();
+
+                    buffer_string = exec("cat " + dir_entry2.path().string() + "/size");
+                    buffer_int = buffer_string.find("\n");
+                    buffer_string = buffer_string.substr(0, buffer_int);
+                
+                    output.size++;
+                    output.data = (organized_data*) realloc(output.data, output.size*sizeof(*output.data));
+                    output.data[output.size-1].size = 5;
+
+                    strcpy(output.data[iterator].keys[0], "type");
+                    strcpy(output.data[iterator].values[0], "logical");
+                    strcpy(output.data[iterator].keys[1], "name");
+                    strcpy(output.data[iterator].values[1], ldisk_name.c_str());
+                    strcpy(output.data[iterator].keys[2], "total_space");
+                    strcpy(output.data[iterator].values[2], buffer_string.c_str());
+
+                    // Modify this to get the free space in the disk
+                    buffer_string = exec("cat " + dir_entry2.path().string() + "/size");
+                    buffer_int = buffer_string.find("\n");
+                    buffer_string = buffer_string.substr(0, buffer_int);
+                
+                    strcpy(output.data[iterator].keys[3], "free_space");
+                    strcpy(output.data[iterator].values[3], buffer_string.c_str());
+
+                    buffer_string = exec("cat " + dir_entry2.path().string() + "/partition");
+                    buffer_int = buffer_string.find("\n");
+                    buffer_string = buffer_string.substr(0, buffer_int);
+
+                    strcpy(output.data[iterator].keys[4], "id");
+                    strcpy(output.data[iterator].values[4], buffer_string.c_str());
+
+                    iterator++;
+                }
+            }
         }
 
         return output;

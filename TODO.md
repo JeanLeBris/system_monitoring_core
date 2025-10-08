@@ -1,0 +1,3 @@
+- [ ] make the windows functions compatible with the new CPU attributes setup
+- [ ] change the windows disk spaces outputs to kB
+- [ ] fix the linux_sys_block_converter() function to get the actual free space in the logical disk (right now it gets the total space because I haven't implemented it yet)

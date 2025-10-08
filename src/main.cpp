@@ -6,6 +6,7 @@
 #include <array>
 #include <thread>
 #include <chrono>
+#include <filesystem>
 
 #include "monitoring.hpp"
 #include "output_converter.hpp"
@@ -28,13 +29,14 @@ int main(int argc, char** argv){
     
     // char bar[4000]{};
 
-    // std::string result = exec("wmic logicaldisk get /VALUE");
-    // // // result.copy(bar, 19, 23);
-    // // result.copy(bar, 3999, 0);
-    // // // std::cout << std::hex << bar;
-    // // for(int i = 0; i < 4000; i++){
-    // //     printf("/%d", bar[i]);
-    // // }
+    // std::string result = exec("cat /sys/block/nvme0n1/size");
+    // // result.copy(bar, 19, 23);
+    // char bar[20] = "";
+    // result.copy(bar, 19, 0);
+    // // std::cout << std::hex << bar;
+    // for(int i = 0; i < 20; i++){
+    //     printf("/%d", bar[i]);
+    // }
 
     // converter::organized_data_array converted_result = converter::wmic_converter(result);
     // // std::cout << result;

@@ -102,7 +102,7 @@ namespace monitoring{
         void update_logical_disk_info();
 
         /**
-         * Returns the logical disks informations such as its ID, its volume name, its total space (in B) as well as its free space (in B)
+         * Returns the logical disks informations such as its ID, its volume name, its total space (in kB) as well as its free space (in kB) (change on windows)
          */
         logical_disk_array get_logical_disk_info();
 
@@ -114,7 +114,7 @@ namespace monitoring{
         void update_basic_physical_disk_info();
 
         /**
-         * Returns the physical disks informations such as its caption and its total space (in B)
+         * Returns the physical disks informations such as its caption and its total space (in kB) (change on windows)
          */
         physical_disk_array get_physical_disk_info();
 

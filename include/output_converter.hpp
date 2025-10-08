@@ -33,6 +33,10 @@ namespace converter{
 
     organized_data_array linux_meminfo_converter(std::string data);
 
+    organized_data_array linux_diskstats_converter(std::string data);
+
+    organized_data_array linux_sys_block_converter();
+
     void display_data(organized_data_array data);
 
     std::string get_value_from_key(organized_data data, const char* key);
