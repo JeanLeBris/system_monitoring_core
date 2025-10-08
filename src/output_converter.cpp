@@ -265,7 +265,7 @@ namespace converter{
 
         int iterator = 0;
         for(auto const& dir_entry1 : std::filesystem::directory_iterator("/sys/block")){
-            pdisk_name = dir_entry1.path().filename();
+            pdisk_name = dir_entry1.path().filename().string();
 
             buffer_string = exec("cat " + dir_entry1.path().string() + "/size");
             buffer_int = buffer_string.find("\n");
@@ -286,7 +286,7 @@ namespace converter{
 
             for(auto const& dir_entry2 : std::filesystem::directory_iterator(dir_entry1)){
                 if(dir_entry2.path().filename().string().find(pdisk_name) != std::string::npos){
-                    ldisk_name = dir_entry2.path().filename();
+                    ldisk_name = dir_entry2.path().filename().string();
 
                     buffer_string = exec("cat " + dir_entry2.path().string() + "/size");
                     buffer_int = buffer_string.find("\n");

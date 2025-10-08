@@ -84,12 +84,12 @@ namespace monitoring{
 
     void monitoring::System::update_cpu_load_percentage(){
         converter::organized_data_array converted_result = converter::wmic_converter(exec("wmic cpu get LoadPercentage /VALUE"));
-        this->cpu_load_percentage = stoll(converter::get_value_from_key(converted_result.data[0], "LoadPercentage"));
+        this->cpu.cpu_load_percentage = stoll(converter::get_value_from_key(converted_result.data[0], "LoadPercentage"));
         free(converted_result.data);
     }
 
     long long monitoring::System::get_cpu_load_percentage(){
-        return this->cpu_load_percentage;
+        return this->cpu.cpu_load_percentage;
     }
 
     void monitoring::System::update_total_ram(){
