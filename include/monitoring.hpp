@@ -5,6 +5,16 @@
 #include <chrono>
 
 namespace monitoring{
+    struct cpu_type{
+        std::chrono::system_clock::time_point last_time;
+        long long last_cpu_activity;
+        long long last_cpu_idle;
+        std::chrono::system_clock::time_point time;
+        long long cpu_activity;
+        long long cpu_idle;
+        int cpu_load_percentage;
+    };
+
     struct logical_disk_type{
         std::string id;
         std::string volume_name;
@@ -32,7 +42,8 @@ namespace monitoring{
 
     class System{
         private:
-        long long cpu_load_percentage;
+        // long long cpu_load_percentage;
+        cpu_type cpu;
 
         long long total_ram;
         long long free_ram;
@@ -45,6 +56,11 @@ namespace monitoring{
         public:
         System();
         ~System();
+
+        /**
+         * Update the CPU load percentage in %
+         */
+        void update_basic_cpu_load_percentage();
 
         /**
          * Update the CPU load percentage in %

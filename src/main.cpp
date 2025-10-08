@@ -17,6 +17,13 @@ int main(int argc, char** argv){
     long long buffer2 = 0;
     // // std::cout << get_const_str_length("TotalPhysicalMemory    ") << "\n";
     monitoring::System sys1 = monitoring::System();
+    // sys1.display_system_info();
+    // converter::organized_data_array info = converter::linux_meminfo_converter(exec("cat /proc/meminfo"));
+    // converter::display_data(info);
+    // free(info.data);
+
+
+    // sys1.update_cpu_load_percentage();
 
     
     // char bar[4000]{};
@@ -39,7 +46,7 @@ int main(int argc, char** argv){
     // free(converted_result.data);
 
     for(int i = 0; i < 10000; i++){
-        // std::this_thread::sleep_for(std::chrono::milliseconds{5000});
+        std::this_thread::sleep_for(std::chrono::milliseconds{500});
 
         // std::cin.get();
         // // std::scanf("");
