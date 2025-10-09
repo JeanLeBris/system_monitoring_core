@@ -2,7 +2,7 @@ export OS
 export CC=g++
 export CFLAGS= -Wall -I include
 export LDFLAGS= -Wall
-export EXEC=test
+export EXEC=test.exe
 SRCNAMES= main.cpp utils.cpp output_converter.cpp monitoring.cpp
 export SRCDIR=src
 export OBJDIR=obj
@@ -76,13 +76,15 @@ obj:
 	mkdir obj$(FILE_SLASH)linux
 
 clean:
-	$(RMFILE) $(OBJDIR)$(FILE_SLASH)*
-	$(RMDIR) $(OBJDIR)$(FILE_SLASH)windows
-	$(RMDIR) $(OBJDIR)$(FILE_SLASH)linux
-	$(RMDIR) $(OBJDIR)
-	$(RMFILE) $(BINDIR)$(FILE_SLASH)*
-	$(RMDIR) $(BINDIR)
-	$(RMFILE) *.exe
+	- $(RMFILE) $(OBJDIR)$(FILE_SLASH)windows$(FILE_SLASH)*
+	- $(RMFILE) $(OBJDIR)$(FILE_SLASH)linux$(FILE_SLASH)*
+	- $(RMFILE) $(OBJDIR)$(FILE_SLASH)*
+	- $(RMDIR) $(OBJDIR)$(FILE_SLASH)windows
+	- $(RMDIR) $(OBJDIR)$(FILE_SLASH)linux
+	- $(RMDIR) $(OBJDIR)
+# 	- $(RMFILE) $(BINDIR)$(FILE_SLASH)*
+# 	- $(RMDIR) $(BINDIR)
+	- $(RMFILE) *.exe
 
 
 
