@@ -6,21 +6,6 @@
 #include "utils.hpp"
 
 namespace monitoring{
-    monitoring::System::System(){
-        this->update_basic_cpu_load_percentage();
-
-        this->update_total_ram();
-        this->update_free_ram();
-
-        this->update_basic_logical_disk_info();
-
-        this->update_basic_physical_disk_info();
-    }
-
-    monitoring::System::~System(){
-        // delete[] this->logical_disk.data;
-    }
-
     void monitoring::System::update_basic_cpu_load_percentage(){
         converter::organized_data_array converted_result = converter::linux_stat_converter(exec("cat /proc/stat"));
         std::chrono::system_clock::time_point req_time = std::chrono::system_clock::now();
@@ -69,10 +54,6 @@ namespace monitoring{
         free(converted_result.data);
     }
 
-    long long monitoring::System::get_cpu_load_percentage(){
-        return this->cpu.cpu_load_percentage;
-    }
-
     void monitoring::System::update_total_ram(){
         converter::organized_data_array converted_result = converter::linux_meminfo_converter(exec("cat /proc/meminfo"));
         this->total_ram = stoll(converter::get_value_from_key(converted_result.data[0], "MemTotal"));
@@ -83,12 +64,6 @@ namespace monitoring{
         converter::organized_data_array converted_result = converter::linux_meminfo_converter(exec("cat /proc/meminfo"));
         this->free_ram = stoll(converter::get_value_from_key(converted_result.data[0], "MemFree"));
         free(converted_result.data);
-    }
-
-    long long monitoring::System::get_ram_load_percentage(){
-        long long used_ram = this->total_ram - this->free_ram;
-
-        return 100 * used_ram / total_ram;
     }
 
     void monitoring::System::update_basic_logical_disk_info(){
@@ -171,10 +146,6 @@ namespace monitoring{
     //     return result;
     // }
 
-    logical_disk_array monitoring::System::get_logical_disk_info(){
-        return this->logical_disk;
-    }
-
     void monitoring::System::update_basic_physical_disk_info(){
         converter::organized_data_array converted_result = converter::linux_sys_block_converter();
 
@@ -204,39 +175,5 @@ namespace monitoring{
         }
 
         free(converted_result.data);
-    }
-
-    physical_disk_array monitoring::System::get_physical_disk_info(){
-        return this->physical_disk;
-    }
-
-    void monitoring::System::update_info(){
-        this->update_cpu_load_percentage();
-        this->update_free_ram();
-        this->update_logical_disk_info();
-    }
-
-    void monitoring::System::display_system_info(){
-        std::chrono::duration<double> duration;
-
-        // std::cout << ;
-        std::cout << "CPU info" << std::endl;
-        std::cout << "\t" << this->get_cpu_load_percentage() << "%" << std::endl;
-        std::cout << "RAM info" << std::endl;
-        std::cout << "\t" << this->get_ram_load_percentage() << "%" << std::endl;
-        std::cout << "logical disk info" << std::endl;
-        for(int i = 0; i < this->get_logical_disk_info().size; i++){
-            duration = (this->get_logical_disk_info().data[i].time - this->get_logical_disk_info().data[i].last_time);
-            std::cout << "\t" << this->get_logical_disk_info().data[i].id;
-            std::cout << this->get_logical_disk_info().data[i].volume_name;
-            std::cout << "\t" << this->get_logical_disk_info().data[i].total_space / std::pow(1024, 2) << "GB";
-            std::cout << "\t" << (long long) this->get_logical_disk_info().data[i].free_space / std::pow(1024, 2) << "GB";
-            std::cout << "\t" << std::abs(this->get_logical_disk_info().data[i].free_space - this->get_logical_disk_info().data[i].last_free_space) / duration.count() << "kB/s" << std::endl;
-        }
-        std::cout << "physical disk info" << std::endl;
-        for(int i = 0; i < this->get_physical_disk_info().size; i++){
-            std::cout << "\t" << this->get_physical_disk_info().data[i].caption;
-            std::cout << "\t" << this->get_physical_disk_info().data[i].total_space / std::pow(1024, 2) << "GB" << std::endl;
-        }
     }
 }
