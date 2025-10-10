@@ -6,7 +6,7 @@
 #include "utils.hpp"
 
 namespace monitoring{
-    void monitoring::System::update_basic_cpu_load_percentage(){
+    void System::update_basic_cpu_load_percentage(){
         converter::organized_data_array converted_result = converter::linux_stat_converter(exec("cat /proc/stat"));
         std::chrono::system_clock::time_point req_time = std::chrono::system_clock::now();
         // char cpu_data_types[7][30] = {"user", "nice", "system", "idle", "iowait", "irq", "softirq"};
@@ -30,7 +30,7 @@ namespace monitoring{
         free(converted_result.data);
     }
 
-    void monitoring::System::update_cpu_load_percentage(){
+    void System::update_cpu_load_percentage(){
         converter::organized_data_array converted_result = converter::linux_stat_converter(exec("cat /proc/stat"));
         std::chrono::system_clock::time_point req_time = std::chrono::system_clock::now();
         // char cpu_data_types[7][30] = {"user", "nice", "system", "idle", "iowait", "irq", "softirq"};
@@ -54,19 +54,19 @@ namespace monitoring{
         free(converted_result.data);
     }
 
-    void monitoring::System::update_total_ram(){
+    void System::update_total_ram(){
         converter::organized_data_array converted_result = converter::linux_meminfo_converter(exec("cat /proc/meminfo"));
         this->total_ram = stoll(converter::get_value_from_key(converted_result.data[0], "MemTotal"));
         free(converted_result.data);
     }
 
-    void monitoring::System::update_free_ram(){
+    void System::update_free_ram(){
         converter::organized_data_array converted_result = converter::linux_meminfo_converter(exec("cat /proc/meminfo"));
         this->free_ram = stoll(converter::get_value_from_key(converted_result.data[0], "MemFree"));
         free(converted_result.data);
     }
 
-    void monitoring::System::update_basic_logical_disk_info(){
+    void System::update_basic_logical_disk_info(){
         converter::organized_data_array converted_result = converter::linux_sys_block_converter();
         // time_t req_time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
         std::chrono::system_clock::time_point req_time = std::chrono::system_clock::now();
@@ -105,7 +105,7 @@ namespace monitoring{
         free(converted_result.data);
     }
 
-    void monitoring::System::update_logical_disk_info(){
+    void System::update_logical_disk_info(){
         converter::organized_data_array converted_result = converter::linux_sys_block_converter();
         // time_t req_time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
         std::chrono::system_clock::time_point req_time = std::chrono::system_clock::now();
@@ -146,7 +146,7 @@ namespace monitoring{
     //     return result;
     // }
 
-    void monitoring::System::update_basic_physical_disk_info(){
+    void System::update_basic_physical_disk_info(){
         converter::organized_data_array converted_result = converter::linux_sys_block_converter();
 
         int out_size = 0;

@@ -6,7 +6,7 @@
 #include "utils.hpp"
 
 namespace monitoring{
-    monitoring::System::System(){
+    System::System(){
         this->update_basic_cpu_load_percentage();
 
         this->update_total_ram();
@@ -17,35 +17,35 @@ namespace monitoring{
         this->update_basic_physical_disk_info();
     }
 
-    monitoring::System::~System(){
+    System::~System(){
         delete[] this->logical_disk.data;
     }
 
-    long long monitoring::System::get_cpu_load_percentage(){
+    long long System::get_cpu_load_percentage(){
         return this->cpu.cpu_load_percentage;
     }
 
-    long long monitoring::System::get_ram_load_percentage(){
+    long long System::get_ram_load_percentage(){
         long long used_ram = this->total_ram - this->free_ram;
 
         return 100 * used_ram / total_ram;
     }
 
-    logical_disk_array monitoring::System::get_logical_disk_info(){
+    logical_disk_array System::get_logical_disk_info(){
         return this->logical_disk;
     }
 
-    physical_disk_array monitoring::System::get_physical_disk_info(){
+    physical_disk_array System::get_physical_disk_info(){
         return this->physical_disk;
     }
 
-    void monitoring::System::update_info(){
+    void System::update_info(){
         this->update_cpu_load_percentage();
         this->update_free_ram();
         this->update_logical_disk_info();
     }
 
-    void monitoring::System::display_system_info(){
+    void System::display_system_info(){
         std::chrono::duration<double> duration;
 
         // std::cout << ;

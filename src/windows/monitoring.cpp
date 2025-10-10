@@ -67,31 +67,31 @@ namespace monitoring{
     //     return 100 * used_ram / total_ram;
     // }
 
-    void monitoring::System::update_basic_cpu_load_percentage(){
+    void System::update_basic_cpu_load_percentage(){
         converter::organized_data_array converted_result = converter::wmic_converter(exec("wmic cpu get LoadPercentage /VALUE"));
         this->cpu.cpu_load_percentage = stoll(converter::get_value_from_key(converted_result.data[0], "LoadPercentage"));
         free(converted_result.data);
     }
 
-    void monitoring::System::update_cpu_load_percentage(){
+    void System::update_cpu_load_percentage(){
         converter::organized_data_array converted_result = converter::wmic_converter(exec("wmic cpu get LoadPercentage /VALUE"));
         this->cpu.cpu_load_percentage = stoll(converter::get_value_from_key(converted_result.data[0], "LoadPercentage"));
         free(converted_result.data);
     }
 
-    void monitoring::System::update_total_ram(){
+    void System::update_total_ram(){
         converter::organized_data_array converted_result = converter::wmic_converter(exec("wmic computersystem get TotalPhysicalMemory /VALUE"));
         this->total_ram = stoll(converter::get_value_from_key(converted_result.data[0], "TotalPhysicalMemory")) / 1024;
         free(converted_result.data);
     }
 
-    void monitoring::System::update_free_ram(){
+    void System::update_free_ram(){
         converter::organized_data_array converted_result = converter::wmic_converter(exec("wmic OS get FreePhysicalMemory /VALUE"));
         this->free_ram = stoll(converter::get_value_from_key(converted_result.data[0], "FreePhysicalMemory"));
         free(converted_result.data);
     }
 
-    void monitoring::System::update_basic_logical_disk_info(){
+    void System::update_basic_logical_disk_info(){
         converter::organized_data_array converted_result = converter::wmic_converter(exec("wmic logicaldisk get /VALUE"));
         // time_t req_time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
         std::chrono::system_clock::time_point req_time = std::chrono::system_clock::now();
@@ -114,7 +114,7 @@ namespace monitoring{
         free(converted_result.data);
     }
 
-    void monitoring::System::update_logical_disk_info(){
+    void System::update_logical_disk_info(){
         converter::organized_data_array converted_result = converter::wmic_converter(exec("wmic logicaldisk get /VALUE"));
         // time_t req_time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
         std::chrono::system_clock::time_point req_time = std::chrono::system_clock::now();
@@ -153,7 +153,7 @@ namespace monitoring{
     //     return result;
     // }
 
-    void monitoring::System::update_basic_physical_disk_info(){
+    void System::update_basic_physical_disk_info(){
         converter::organized_data_array converted_result = converter::wmic_converter(exec("wmic diskdrive get /VALUE"));
 
         this->physical_disk = {.size = 0, .data = NULL};
