@@ -79,6 +79,21 @@ namespace converter{
         return output;
     }
 
+    organized_data_array linux_hostname_converter(std::string data){
+        organized_data_array output = {.size = 0, .data = NULL};
+
+        output.size++;
+        output.data = (organized_data*) realloc(output.data, output.size*sizeof(*output.data));
+        output.data[output.size-1].size = 1;
+
+        int buffer_int = data.find("\n");
+
+        strcpy(output.data[0].keys[0], "hostname");
+        strcpy(output.data[0].values[0], data.substr(0, buffer_int).c_str());
+
+        return output;
+    }
+
     organized_data_array linux_stat_converter(std::string data){
         // std::string::const_iterator index = data.cbegin();
         // std::string::const_iterator end = data.cend();

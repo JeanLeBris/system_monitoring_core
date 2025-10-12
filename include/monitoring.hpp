@@ -42,6 +42,8 @@ namespace monitoring{
 
     class System{
         private:
+        std::string hostname;
+
         // long long cpu_load_percentage;
         cpu_type cpu;
 
@@ -56,6 +58,18 @@ namespace monitoring{
         public:
         System();
         ~System();
+
+        /**
+         * Update the hostname
+         */
+        void update_hostname();
+
+        /**
+         * Get the hostname
+         */
+        std::string get_hostname();
+
+
 
         /**
          * Update the CPU load percentage in %

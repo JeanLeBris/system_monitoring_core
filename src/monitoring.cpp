@@ -7,6 +7,8 @@
 
 namespace monitoring{
     System::System(){
+        this->update_hostname();
+
         this->update_basic_cpu_load_percentage();
 
         this->update_total_ram();
@@ -19,6 +21,10 @@ namespace monitoring{
 
     System::~System(){
         delete[] this->logical_disk.data;
+    }
+
+    std::string System::get_hostname(){
+        return this->hostname;
     }
 
     long long System::get_cpu_load_percentage(){
@@ -51,6 +57,8 @@ namespace monitoring{
         // std::cout << ;
         std::cout << "CPU info" << std::endl;
         std::cout << "\t" << this->get_cpu_load_percentage() << "%" << std::endl;
+        std::cout << "Hostname" << std::endl;
+        std::cout << "\t" << this->get_hostname() << std::endl;
         std::cout << "RAM info" << std::endl;
         std::cout << "\t" << this->get_ram_load_percentage() << "%" << std::endl;
         std::cout << "logical disk info" << std::endl;

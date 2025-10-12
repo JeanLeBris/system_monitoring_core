@@ -6,6 +6,14 @@
 #include "utils.hpp"
 
 namespace monitoring{
+    void System::update_hostname(){
+        converter::organized_data_array converted_result = converter::linux_hostname_converter(exec("cat /etc/hostname"));
+
+        this->hostname = converter::get_value_from_key(converted_result.data[0], "hostname");
+
+        free(converted_result.data);
+    }
+
     void System::update_basic_cpu_load_percentage(){
         converter::organized_data_array converted_result = converter::linux_stat_converter(exec("cat /proc/stat"));
         std::chrono::system_clock::time_point req_time = std::chrono::system_clock::now();
