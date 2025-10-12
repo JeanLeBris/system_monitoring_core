@@ -67,6 +67,14 @@ namespace monitoring{
     //     return 100 * used_ram / total_ram;
     // }
 
+    void System::update_hostname(){
+        converter::organized_data_array converted_result = converter::windows_hostname_converter(exec("hostname"));
+
+        this->hostname = converter::get_value_from_key(converted_result.data[0], "hostname");
+
+        free(converted_result.data);
+    }
+
     void System::update_basic_cpu_load_percentage(){
         converter::organized_data_array converted_result = converter::wmic_converter(exec("wmic cpu get LoadPercentage /VALUE"));
         this->cpu.cpu_load_percentage = stoll(converter::get_value_from_key(converted_result.data[0], "LoadPercentage"));

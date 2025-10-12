@@ -55,10 +55,10 @@ namespace monitoring{
         std::chrono::duration<double> duration;
 
         // std::cout << ;
-        std::cout << "CPU info" << std::endl;
-        std::cout << "\t" << this->get_cpu_load_percentage() << "%" << std::endl;
         std::cout << "Hostname" << std::endl;
         std::cout << "\t" << this->get_hostname() << std::endl;
+        std::cout << "CPU info" << std::endl;
+        std::cout << "\t" << this->get_cpu_load_percentage() << "%" << std::endl;
         std::cout << "RAM info" << std::endl;
         std::cout << "\t" << this->get_ram_load_percentage() << "%" << std::endl;
         std::cout << "logical disk info" << std::endl;

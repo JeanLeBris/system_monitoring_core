@@ -29,6 +29,8 @@ namespace converter{
 
     organized_data_array wmic_converter(std::string data);
 
+    organized_data_array windows_hostname_converter(std::string data);
+
     organized_data_array linux_hostname_converter(std::string data);
 
     organized_data_array linux_stat_converter(std::string data);
