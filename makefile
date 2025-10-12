@@ -14,7 +14,8 @@ ifeq ($(OS), Windows)
 	RMFILE= del /s /q
 	COPYFILE= copy
 	SHARED_LIBRARY_EXT= dll
-	SRCNAMES+= windows/monitoring.cpp
+	SRCNAMES+= windows/monitoring.cpp windows/server.cpp
+	LDFLAGS+= -l ws2_32
 	FILE_SLASH=\\
 
 else
@@ -24,7 +25,8 @@ ifeq ($(OS), Windows_NT)
 	RMFILE= del /s /q
 	COPYFILE= copy
 	SHARED_LIBRARY_EXT= dll
-	SRCNAMES+= windows/monitoring.cpp
+	SRCNAMES+= windows/monitoring.cpp windows/server.cpp
+	LDFLAGS+= -l ws2_32
 	FILE_SLASH=\\
 
 else
@@ -33,7 +35,7 @@ ifeq ($(OS), Linux)
 	RMFILE= rm
 	COPYFILE= cp
 	SHARED_LIBRARY_EXT= so
-	SRCNAMES+= linux/monitoring.cpp
+	SRCNAMES+= linux/monitoring.cpp linux/server.cpp
 	FILE_SLASH=/
 endif
 endif
