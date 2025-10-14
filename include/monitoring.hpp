@@ -80,6 +80,11 @@ namespace monitoring{
         void update_time();
 
         /**
+         * Get the system object initial time
+         */
+        std::chrono::system_clock::time_point get_initial_time();
+
+        /**
          * Get the system object last time
          */
         std::chrono::system_clock::time_point get_last_time();

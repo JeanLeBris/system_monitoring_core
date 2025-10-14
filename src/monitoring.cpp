@@ -37,6 +37,10 @@ namespace monitoring{
         this->time = std::chrono::system_clock::now();
     }
 
+    std::chrono::system_clock::time_point System::get_initial_time(){
+        return this->initial_time;
+    }
+
     std::chrono::system_clock::time_point System::get_last_time(){
         return this->last_time;
     }
