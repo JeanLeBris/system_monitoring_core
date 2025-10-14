@@ -77,13 +77,27 @@ namespace monitoring{
 
     void System::update_basic_cpu_load_percentage(){
         converter::organized_data_array converted_result = converter::wmic_converter(exec("wmic cpu get LoadPercentage /VALUE"));
-        this->cpu.cpu_load_percentage = stoll(converter::get_value_from_key(converted_result.data[0], "LoadPercentage"));
+        if(converter::get_value_from_key(converted_result.data[0], "LoadPercentage").length() > 0){
+            this->cpu.cpu_load_percentage = stoll(converter::get_value_from_key(converted_result.data[0], "LoadPercentage"));
+        }
+        else{
+            this->cpu.cpu_load_percentage = 0;
+            // printf("this crashed in cpu basic stoll\n");
+            // exit(1);
+        }
         free(converted_result.data);
     }
 
     void System::update_cpu_load_percentage(){
         converter::organized_data_array converted_result = converter::wmic_converter(exec("wmic cpu get LoadPercentage /VALUE"));
-        this->cpu.cpu_load_percentage = stoll(converter::get_value_from_key(converted_result.data[0], "LoadPercentage"));
+        if(converter::get_value_from_key(converted_result.data[0], "LoadPercentage").length() > 0){
+            this->cpu.cpu_load_percentage = stoll(converter::get_value_from_key(converted_result.data[0], "LoadPercentage"));
+        }
+        else{
+            this->cpu.cpu_load_percentage = 0;
+            // printf("this crashed in cpu stoll\n");
+            // exit(1);
+        }
         free(converted_result.data);
     }
 
