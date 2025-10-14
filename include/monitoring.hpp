@@ -15,6 +15,11 @@ namespace monitoring{
         int cpu_load_percentage;
     };
 
+    struct ram_type{
+        long long total_ram;
+        long long free_ram;
+    };
+
     struct logical_disk_type{
         std::string id;
         std::string volume_name;
@@ -42,6 +47,7 @@ namespace monitoring{
 
     class System{
         private:
+        std::chrono::system_clock::time_point initial_time;
         std::chrono::system_clock::time_point last_time;
         std::chrono::system_clock::time_point time;
 
@@ -50,8 +56,9 @@ namespace monitoring{
         // long long cpu_load_percentage;
         cpu_type cpu;
 
-        long long total_ram;
-        long long free_ram;
+        // long long total_ram;
+        // long long free_ram;
+        ram_type ram;
 
         logical_disk_array logical_disk;
 
@@ -170,6 +177,13 @@ namespace monitoring{
          * Display the system's information basically
          */
         void display_system_info();
+
+
+
+        /**
+         * Get json string of the system's data
+         */
+        std::string get_json_data();
     };
 }
 

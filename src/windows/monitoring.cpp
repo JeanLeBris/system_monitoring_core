@@ -103,13 +103,13 @@ namespace monitoring{
 
     void System::update_total_ram(){
         converter::organized_data_array converted_result = converter::wmic_converter(exec("wmic computersystem get TotalPhysicalMemory /VALUE"));
-        this->total_ram = stoll(converter::get_value_from_key(converted_result.data[0], "TotalPhysicalMemory")) / 1024;
+        this->ram.total_ram = stoll(converter::get_value_from_key(converted_result.data[0], "TotalPhysicalMemory")) / 1024;
         free(converted_result.data);
     }
 
     void System::update_free_ram(){
         converter::organized_data_array converted_result = converter::wmic_converter(exec("wmic OS get FreePhysicalMemory /VALUE"));
-        this->free_ram = stoll(converter::get_value_from_key(converted_result.data[0], "FreePhysicalMemory"));
+        this->ram.free_ram = stoll(converter::get_value_from_key(converted_result.data[0], "FreePhysicalMemory"));
         free(converted_result.data);
     }
 

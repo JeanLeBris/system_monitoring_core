@@ -87,7 +87,26 @@ int test2(int argc, char** argv){
             // delete sys;
         }
         else if(strcmp(argv[1], "master") == 0){
-            
+            monitoring::System sys =  monitoring::System();
+
+            pthread_t sniffer_thread;
+            if(pthread_create(&sniffer_thread, NULL, sys_updater, (void*) &sys) < 0){
+                perror("could not create thread");
+                return 1;
+            }
+
+            std::chrono::duration<double, std::milli> duration;
+            std::chrono::system_clock::time_point time;
+            while(1){
+                time = std::chrono::system_clock::now();
+                duration = std::chrono::system_clock::now() - time;
+                while(duration.count() < 1000){
+                    std::this_thread::sleep_for(std::chrono::milliseconds{100});
+                    duration = std::chrono::system_clock::now() - time;
+                }
+                // sys.display_system_info();
+                std::cout << sys.get_json_data() << std::endl;
+            }
         }
     }
 

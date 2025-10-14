@@ -64,13 +64,13 @@ namespace monitoring{
 
     void System::update_total_ram(){
         converter::organized_data_array converted_result = converter::linux_meminfo_converter(exec("cat /proc/meminfo"));
-        this->total_ram = stoll(converter::get_value_from_key(converted_result.data[0], "MemTotal"));
+        this->ram.total_ram = stoll(converter::get_value_from_key(converted_result.data[0], "MemTotal"));
         free(converted_result.data);
     }
 
     void System::update_free_ram(){
         converter::organized_data_array converted_result = converter::linux_meminfo_converter(exec("cat /proc/meminfo"));
-        this->free_ram = stoll(converter::get_value_from_key(converted_result.data[0], "MemFree"));
+        this->ram.free_ram = stoll(converter::get_value_from_key(converted_result.data[0], "MemFree"));
         free(converted_result.data);
     }
 
