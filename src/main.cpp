@@ -34,8 +34,15 @@ void *sys_updater(void *_args){
     // thread_args *args = (thread_args*) _args;
     // monitoring::System *sys = args->sys;
     monitoring::System *sys = (monitoring::System*) _args;
+    std::chrono::duration<double, std::milli> duration;
     while(1){
         // std::this_thread::sleep_for(std::chrono::milliseconds{500});
+        duration = std::chrono::system_clock::now() - sys->get_time();
+        while(duration.count() < 500){
+            std::this_thread::sleep_for(std::chrono::milliseconds{100});
+            duration = std::chrono::system_clock::now() - sys->get_time();
+        }
+        // printf("ping\n");
         
         sys->update_info();
         // sys->display_system_info();
@@ -64,8 +71,16 @@ int test2(int argc, char** argv){
                 return 1;
             }
             // pthread_join(sniffer_thread, NULL);
+            std::chrono::duration<double, std::milli> duration;
+            std::chrono::system_clock::time_point time;
             while(1){
-                std::this_thread::sleep_for(std::chrono::milliseconds{1000});
+                // std::this_thread::sleep_for(std::chrono::milliseconds{1000});
+                time = std::chrono::system_clock::now();
+                duration = std::chrono::system_clock::now() - time;
+                while(duration.count() < 1000){
+                    std::this_thread::sleep_for(std::chrono::milliseconds{100});
+                    duration = std::chrono::system_clock::now() - time;
+                }
                 sys.display_system_info();
                 // sys->display_system_info();
             }

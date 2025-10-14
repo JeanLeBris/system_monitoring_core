@@ -42,6 +42,9 @@ namespace monitoring{
 
     class System{
         private:
+        std::chrono::system_clock::time_point last_time;
+        std::chrono::system_clock::time_point time;
+
         std::string hostname;
 
         // long long cpu_load_percentage;
@@ -58,6 +61,28 @@ namespace monitoring{
         public:
         System();
         ~System();
+
+        /**
+         * Update the system object time
+         */
+        void update_basic_time();
+
+        /**
+         * Update the system object time
+         */
+        void update_time();
+
+        /**
+         * Get the system object last time
+         */
+        std::chrono::system_clock::time_point get_last_time();
+
+        /**
+         * Get the system object time
+         */
+        std::chrono::system_clock::time_point get_time();
+
+
 
         /**
          * Update the hostname

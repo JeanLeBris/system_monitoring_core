@@ -7,6 +7,8 @@
 
 namespace monitoring{
     System::System(){
+        this->update_basic_time();
+
         this->update_hostname();
 
         this->update_basic_cpu_load_percentage();
@@ -21,6 +23,24 @@ namespace monitoring{
 
     System::~System(){
         delete[] this->logical_disk.data;
+    }
+
+    void System::update_basic_time(){
+        this->time = std::chrono::system_clock::now();
+        this->last_time = this->time - std::chrono::seconds{1};
+    }
+    
+    void System::update_time(){
+        this->last_time = this->time;
+        this->time = std::chrono::system_clock::now();
+    }
+
+    std::chrono::system_clock::time_point System::get_last_time(){
+        return this->last_time;
+    }
+
+    std::chrono::system_clock::time_point System::get_time(){
+        return this->time;
     }
 
     std::string System::get_hostname(){
@@ -46,6 +66,7 @@ namespace monitoring{
     }
 
     void System::update_info(){
+        this->update_time();
         this->update_cpu_load_percentage();
         this->update_free_ram();
         this->update_logical_disk_info();
