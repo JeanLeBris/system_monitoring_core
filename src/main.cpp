@@ -7,66 +7,78 @@
 #include <thread>
 #include <chrono>
 #include <filesystem>
+#include <cstring>
 
 #include "monitoring.hpp"
 #include "output_converter.hpp"
 #include "utils.hpp"
 
-int main(int argc, char** argv){
-    // // std::cout << exec("wmic cpu get Loadpercentage");
-    monitoring::logical_disk_array buffer1 = {.size = 0, .data = NULL};
-    long long buffer2 = 0;
-    // // std::cout << get_const_str_length("TotalPhysicalMemory    ") << "\n";
+int test1(int argc, char** argv){
     monitoring::System sys1 = monitoring::System();
-    // sys1.display_system_info();
-    // converter::organized_data_array info = converter::linux_meminfo_converter(exec("cat /proc/meminfo"));
-    // converter::display_data(info);
-    // free(info.data);
-
-
-    // sys1.update_cpu_load_percentage();
-
-    
-    // char bar[4000]{};
-
-    // std::string result = exec("cat /sys/block/nvme0n1/size");
-    // // result.copy(bar, 19, 23);
-    // char bar[20] = "";
-    // result.copy(bar, 19, 0);
-    // // std::cout << std::hex << bar;
-    // for(int i = 0; i < 20; i++){
-    //     printf("/%d", bar[i]);
-    // }
-
-    // converter::organized_data_array converted_result = converter::wmic_converter(result);
-    // // std::cout << result;
-    // converter::display_data(converted_result);
-    // std::cout << converter::get_value_from_key(converted_result.data[0], "Access") << std::endl;
-    // std::cout << converter::get_value_from_key(converted_result.data[0], "Accessl") << std::endl;
-    // std::cout << converter::get_value_from_key(converted_result.data[0], "Availability") << std::endl;
-    // std::cout << converter::get_value_from_key(converted_result.data[0], "Caption") << std::endl;
-    // free(converted_result.data);
 
     for(int i = 0; i < 10000; i++){
         std::this_thread::sleep_for(std::chrono::milliseconds{500});
 
-        // std::cin.get();
-        // // std::scanf("");
-        // std::cout << exec("wmic logicaldisk get /VALUE") << std::endl;
-
-        // // buffer1 = sys1.get_basic_logical_disk_info();
-        // sys1.update_cpu_load_percentage();
-        // buffer2 = sys1.get_cpu_load_percentage();
-
-        // // std::cout << buffer;
-        // // printf("%lld\n", buffer1.data[0].free_space);
-        // printf("%lld\n", buffer2);
-        // // delete[] buffer1.data;
-
         sys1.update_info();
         sys1.display_system_info();
     }
-    // free(buffer.data);
 
     return 0;
+}
+
+// struct thread_args{
+//     monitoring::System *sys;
+// };
+
+void *sys_updater(void *_args){
+    // thread_args *args = (thread_args*) _args;
+    // monitoring::System *sys = args->sys;
+    monitoring::System *sys = (monitoring::System*) _args;
+    while(1){
+        // std::this_thread::sleep_for(std::chrono::milliseconds{500});
+        
+        sys->update_info();
+        // sys->display_system_info();
+        // printf("test\n");
+        // printf("%lld%\n", sys->get_cpu_load_percentage());
+        // printf("%s%\n", sys->get_hostname().c_str());
+        // std::cout << sys->get_hostname();
+        // printf("test\n");
+    }
+    // free(args);
+    pthread_exit(NULL);
+}
+
+int test2(int argc, char** argv){
+    if(argc == 2){
+        if(strcmp(argv[1], "slave") == 0){
+            monitoring::System sys =  monitoring::System();
+            // monitoring::System *sys = new monitoring::System;
+            // sys.update_info();
+            // sys.display_system_info();
+
+            // thread_args *args = (thread_args*) malloc(sizeof(thread_args));
+            pthread_t sniffer_thread;
+            if(pthread_create(&sniffer_thread, NULL, sys_updater, (void*) &sys) < 0){
+                perror("could not create thread");
+                return 1;
+            }
+            // pthread_join(sniffer_thread, NULL);
+            while(1){
+                std::this_thread::sleep_for(std::chrono::milliseconds{1000});
+                sys.display_system_info();
+                // sys->display_system_info();
+            }
+            // delete sys;
+        }
+        else if(strcmp(argv[1], "master") == 0){
+            
+        }
+    }
+
+    return 0;
+}
+
+int main(int argc, char** argv){
+    return test2(argc, argv);
 }

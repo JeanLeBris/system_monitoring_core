@@ -1,6 +1,7 @@
 export OS
 export CC=g++
 export CFLAGS= -Wall -I include
+# export LDFLAGS= -Wall -l argparse
 export LDFLAGS= -Wall
 export EXEC=test.exe
 SRCNAMES= main.cpp utils.cpp output_converter.cpp monitoring.cpp
@@ -61,8 +62,17 @@ endif
 export LIBRARY_TYPE
 
 # compile:bin obj $(OBJNAMES)
+# compile:obj update $(OBJNAMES)
 compile:obj $(OBJNAMES)
 	$(CC) $(OBJ) -o $(EXEC) $(LDFLAGS)
+
+# update:
+# 	git submodule update --recursive --remote
+# # 	$(CC) -c ./lib/deallocator/src/deallocator.cpp -o ./obj/deallocator.o
+# # # 	ar rcs ./bin/libdeallocator.a ./obj/deallocator.o
+# # 	$(CC) -fpic -shared ./obj/deallocator.o -o ./bin/libdeallocator.dll
+# 	@(cd ./lib/argparse && $(MAKE) compile)
+# 	$(COPYFILE) .$(FILE_SLASH)lib$(FILE_SLASH)argparse$(FILE_SLASH)bin$(FILE_SLASH)* .
 
 %.o:
 	$(CC) -c $(SRCDIR)/$(@:.o=.cpp) -o $(OBJDIR)/$@ $(CFLAGS)
@@ -87,6 +97,9 @@ clean:
 # 	- $(RMFILE) $(BINDIR)$(FILE_SLASH)*
 # 	- $(RMDIR) $(BINDIR)
 	- $(RMFILE) *.exe
+	- $(RMFILE) *.dll
+	- $(RMFILE) *.a
+	- $(RMFILE) *.so
 
 
 
