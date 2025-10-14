@@ -181,9 +181,14 @@ namespace monitoring{
 
 
         /**
-         * Get json string of the system's data
+         * Get a json string from the system's data
          */
-        std::string get_json_data();
+        std::string to_json();
+
+        /**
+         * Get the system's data from a json string
+         */
+        System to_json(std::string data);
     };
 }
 

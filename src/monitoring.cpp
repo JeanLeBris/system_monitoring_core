@@ -100,7 +100,7 @@ namespace monitoring{
         }
     }
 
-    std::string System::get_json_data(){
+    std::string System::to_json(){
         std::string output;
         // std::chrono::duration<double, std::chrono::milliseconds> duration;
 
@@ -225,6 +225,12 @@ namespace monitoring{
         // duration = this->time - this->initial_time;
         // std::cout << std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(this->time - this->initial_time).count()) << std::endl;
         // std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(this->last_time - this->initial_time).count() << std::endl;
+
+        return output;
+    }
+
+    System System::to_json(std::string data){
+        System output;
 
         return output;
     }

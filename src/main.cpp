@@ -105,7 +105,7 @@ int test2(int argc, char** argv){
                     duration = std::chrono::system_clock::now() - time;
                 }
                 // sys.display_system_info();
-                std::cout << sys.get_json_data() << std::endl;
+                std::cout << sys.to_json() << std::endl;
             }
         }
     }
