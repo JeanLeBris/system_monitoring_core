@@ -60,6 +60,7 @@ int test2(int argc, char** argv){
     if(argc == 2){
         if(strcmp(argv[1], "slave") == 0){
             monitoring::System sys =  monitoring::System();
+            sys.basic_update_info();
             // monitoring::System *sys = new monitoring::System;
             // sys.update_info();
             // sys.display_system_info();
@@ -87,7 +88,11 @@ int test2(int argc, char** argv){
             // delete sys;
         }
         else if(strcmp(argv[1], "master") == 0){
-            monitoring::System sys =  monitoring::System();
+            monitoring::System sys = monitoring::System();
+            sys.basic_update_info();
+            // monitoring::System *sys2 = new monitoring::System;
+            monitoring::System sys2 = monitoring::System();
+            // sys2->basic_update_info();
 
             pthread_t sniffer_thread;
             if(pthread_create(&sniffer_thread, NULL, sys_updater, (void*) &sys) < 0){
@@ -104,8 +109,13 @@ int test2(int argc, char** argv){
                     std::this_thread::sleep_for(std::chrono::milliseconds{100});
                     duration = std::chrono::system_clock::now() - time;
                 }
-                // sys.display_system_info();
-                std::cout << sys.to_json() << std::endl;
+                sys.display_system_info();
+                // std::cout << sys.to_json() << std::endl;
+                sys2.from_json(sys.to_json());
+                std::cout << "==================" << std::endl;
+                // std::cout << sys2->to_json() << std::endl;
+                sys2.display_system_info();
+                std::cout << "++++++++++++++++++" << std::endl;
             }
         }
     }

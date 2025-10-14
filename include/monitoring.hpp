@@ -174,6 +174,16 @@ namespace monitoring{
         /**
          * Update the system's info
          */
+        void initial_info();
+
+        /**
+         * Update the system's info
+         */
+        void basic_update_info();
+
+        /**
+         * Update the system's info
+         */
         void update_info();
 
 
@@ -193,7 +203,7 @@ namespace monitoring{
         /**
          * Get the system's data from a json string
          */
-        System to_json(std::string data);
+        void from_json(std::string data);
     };
 }
 

@@ -8,22 +8,13 @@
 
 namespace monitoring{
     System::System(){
-        this->update_basic_time();
-
-        this->update_hostname();
-
-        this->update_basic_cpu_load_percentage();
-
-        this->update_total_ram();
-        this->update_free_ram();
-
-        this->update_basic_logical_disk_info();
-
-        this->update_basic_physical_disk_info();
+        this->logical_disk.size = 0;
+        this->physical_disk.size = 0;
     }
 
     System::~System(){
         delete[] this->logical_disk.data;
+        delete[] this->physical_disk.data;
     }
 
     void System::update_basic_time(){
@@ -71,6 +62,21 @@ namespace monitoring{
         return this->physical_disk;
     }
 
+    void System::basic_update_info(){
+        this->update_basic_time();
+
+        this->update_hostname();
+
+        this->update_basic_cpu_load_percentage();
+
+        this->update_total_ram();
+        this->update_free_ram();
+
+        this->update_basic_logical_disk_info();
+
+        this->update_basic_physical_disk_info();
+    }
+
     void System::update_info(){
         this->update_time();
         this->update_cpu_load_percentage();
@@ -95,6 +101,7 @@ namespace monitoring{
             std::cout << this->get_logical_disk_info().data[i].volume_name;
             std::cout << "\t" << this->get_logical_disk_info().data[i].total_space / std::pow(1024, 2) << "GB";
             std::cout << "\t" << this->get_logical_disk_info().data[i].free_space / std::pow(1024, 2) << "GB";
+            std::cout << "\t" << duration.count();
             std::cout << "\t" << (long long) (std::abs(this->get_logical_disk_info().data[i].free_space - this->get_logical_disk_info().data[i].last_free_space) / duration.count()) << "kB/s" << std::endl;
         }
         std::cout << "physical disk info" << std::endl;
@@ -111,12 +118,12 @@ namespace monitoring{
         output.append("{");
 
         output.append("\"last_time\":");
-        output.append(std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(this->last_time - this->initial_time).count()));
+        output.append(std::to_string(std::chrono::duration_cast<std::chrono::nanoseconds>(this->last_time - this->initial_time).count()));
         output.append("");
         output.append(",");
 
         output.append("\"time\":");
-        output.append(std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(this->time - this->initial_time).count()));
+        output.append(std::to_string(std::chrono::duration_cast<std::chrono::nanoseconds>(this->time - this->initial_time).count()));
         output.append("");
         output.append(",");
 
@@ -170,7 +177,7 @@ namespace monitoring{
             output.append("");
             output.append(",");
             output.append("\"last_time\":");
-            output.append(std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(this->logical_disk.data[i].last_time - this->initial_time).count()));
+            output.append(std::to_string(std::chrono::duration_cast<std::chrono::nanoseconds>(this->logical_disk.data[i].last_time - this->initial_time).count()));
             output.append("");
             output.append(",");
             output.append("\"last_free_space\":");
@@ -178,7 +185,7 @@ namespace monitoring{
             output.append("");
             output.append(",");
             output.append("\"time\":");
-            output.append(std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(this->logical_disk.data[i].time - this->initial_time).count()));
+            output.append(std::to_string(std::chrono::duration_cast<std::chrono::nanoseconds>(this->logical_disk.data[i].time - this->initial_time).count()));
             output.append("");
             output.append(",");
             output.append("\"free_space\":");
@@ -233,9 +240,161 @@ namespace monitoring{
         return output;
     }
 
-    System System::to_json(std::string data){
-        System output;
+    void System::from_json(std::string data){
+        std::string buffer_string = data;
+        int buffer_int = 0;
+        int size_buffer = 0;
+        std::chrono::system_clock::time_point zero_point = std::chrono::system_clock::time_point(std::chrono::nanoseconds(0));
 
-        return output;
+        // std::cout << std::to_string(this->logical_disk.size) << ":" << std::to_string(this->physical_disk.size) << std::endl;
+
+        buffer_int = buffer_string.find(":");
+        buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+        buffer_int = buffer_string.find(",");
+        this->last_time = std::chrono::system_clock::time_point(std::chrono::nanoseconds(std::stoll(buffer_string.substr(0, buffer_int))));
+        buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+
+        buffer_int = buffer_string.find(":");
+        buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+        buffer_int = buffer_string.find(",");
+        this->time = std::chrono::system_clock::time_point(std::chrono::nanoseconds(std::stoll(buffer_string.substr(0, buffer_int))));
+        buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+        
+        buffer_int = buffer_string.find(":");
+        buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+        buffer_int = buffer_string.find("\"");
+        buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+        buffer_int = buffer_string.find("\"");
+        this->hostname = buffer_string.substr(0, buffer_int);
+        buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+        
+        buffer_int = buffer_string.find(":");
+        buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+        buffer_int = buffer_string.find(":");
+        buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+        buffer_int = buffer_string.find("}");
+        this->cpu.cpu_load_percentage = std::stoi(buffer_string.substr(0, buffer_int));
+        buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+        
+        buffer_int = buffer_string.find(":");
+        buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+        buffer_int = buffer_string.find(":");
+        buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+        buffer_int = buffer_string.find(",");
+        this->ram.total_ram = std::stoll(buffer_string.substr(0, buffer_int));
+        buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+        
+        buffer_int = buffer_string.find(":");
+        buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+        buffer_int = buffer_string.find("}");
+        this->ram.free_ram = std::stoll(buffer_string.substr(0, buffer_int));
+        buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+        
+        size_buffer = this->logical_disk.size;
+        buffer_int = buffer_string.find(":");
+        buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+        buffer_int = buffer_string.find(":");
+        buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+        buffer_int = buffer_string.find(",");
+        this->logical_disk.size = std::stoi(buffer_string.substr(0, buffer_int));
+        buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+
+        if(size_buffer == 0){
+            this->logical_disk.data = new logical_disk_type[this->logical_disk.size];
+        }
+        else if(size_buffer != this->logical_disk.size){
+            delete[] this->logical_disk.data;
+            this->logical_disk.data = new logical_disk_type[this->logical_disk.size];
+        }
+        for(int i = 0; i < this->logical_disk.size; i++){
+            buffer_int = buffer_string.find("{");
+            buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+            
+            buffer_int = buffer_string.find(":");
+            buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+            buffer_int = buffer_string.find("\"");
+            buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+            buffer_int = buffer_string.find("\"");
+            this->logical_disk.data[i].id = buffer_string.substr(0, buffer_int);
+            buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+            
+            buffer_int = buffer_string.find(":");
+            buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+            buffer_int = buffer_string.find("\"");
+            buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+            buffer_int = buffer_string.find("\"");
+            this->logical_disk.data[i].volume_name = buffer_string.substr(0, buffer_int);
+            buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+            
+            buffer_int = buffer_string.find(":");
+            buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+            buffer_int = buffer_string.find(",");
+            this->logical_disk.data[i].total_space = std::stoll(buffer_string.substr(0, buffer_int));
+            buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+            
+            buffer_int = buffer_string.find(":");
+            buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+            buffer_int = buffer_string.find(",");
+            this->logical_disk.data[i].last_time = std::chrono::system_clock::time_point(std::chrono::nanoseconds(std::stoll(buffer_string.substr(0, buffer_int))));
+            buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+            
+            buffer_int = buffer_string.find(":");
+            buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+            buffer_int = buffer_string.find(",");
+            this->logical_disk.data[i].last_free_space = std::stoll(buffer_string.substr(0, buffer_int));
+            buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+            
+            buffer_int = buffer_string.find(":");
+            buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+            buffer_int = buffer_string.find(",");
+            this->logical_disk.data[i].time = std::chrono::system_clock::time_point(std::chrono::nanoseconds(std::stoll(buffer_string.substr(0, buffer_int))));
+            buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+            
+            buffer_int = buffer_string.find(":");
+            buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+            buffer_int = buffer_string.find("}");
+            this->logical_disk.data[i].free_space = std::stoll(buffer_string.substr(0, buffer_int));
+            buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+        }
+        
+        size_buffer = this->physical_disk.size;
+        buffer_int = buffer_string.find(":");
+        buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+        buffer_int = buffer_string.find(":");
+        buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+        buffer_int = buffer_string.find(",");
+        this->physical_disk.size = std::stoi(buffer_string.substr(0, buffer_int));
+        buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+
+        if(size_buffer == 0){
+            this->physical_disk.data = new physical_disk_type[this->physical_disk.size];
+        }
+        else if(size_buffer != this->physical_disk.size){
+            delete[] this->physical_disk.data;
+            this->physical_disk.data = new physical_disk_type[this->physical_disk.size];
+        }
+        // this->physical_disk.data = new physical_disk_type[this->physical_disk.size];
+        for(int i = 0; i < this->physical_disk.size; i++){
+            buffer_int = buffer_string.find("{");
+            buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+            
+            buffer_int = buffer_string.find(":");
+            buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+            buffer_int = buffer_string.find("\"");
+            buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+            buffer_int = buffer_string.find("\"");
+            this->physical_disk.data[i].caption = buffer_string.substr(0, buffer_int);
+            buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+            
+            buffer_int = buffer_string.find(":");
+            buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+            buffer_int = buffer_string.find("}");
+            this->physical_disk.data[i].total_space = std::stoll(buffer_string.substr(0, buffer_int));
+            buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+        }
+
+        // std::cout << std::to_string(std::chrono::duration_cast<std::chrono::nanoseconds>(this->last_time - zero_point).count()) << std::endl;
+        // std::cout << this->hostname << std::endl;
+        // std::cout << std::to_string(this->cpu.cpu_load_percentage) << std::endl;
     }
 }
