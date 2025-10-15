@@ -85,7 +85,7 @@ int test2(int argc, char** argv){
             socklen_t len = sizeof(servaddr);
             int n = 0;
             char buffer_string[10000] = "\0";
-            server::BindingSocket(&sockfd, &servaddr);
+            // server::BindingSocket(&sockfd, &servaddr);
 
             // pthread_join(sniffer_thread, NULL);
             std::chrono::duration<double, std::milli> duration;
