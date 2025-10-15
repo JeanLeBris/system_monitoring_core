@@ -3,7 +3,13 @@
 
 #include <string>
 
+#ifdef _WIN64
+#include <winsock2.h>
+#include <WS2tcpip.h>
+#endif
 #ifdef __linux__
+#include <sys/socket.h>
+#include <netinet/in.h>
 #define SOCKET int
 #define SOCKADDR_IN sockaddr_in
 #define SOCKADDR sockaddr

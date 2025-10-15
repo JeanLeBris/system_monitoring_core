@@ -12,6 +12,7 @@
 #include "monitoring.hpp"
 #include "output_converter.hpp"
 #include "utils.hpp"
+#include "server.hpp"
 
 int test1(int argc, char** argv){
     monitoring::System sys1 = monitoring::System();
@@ -71,6 +72,21 @@ int test2(int argc, char** argv){
                 perror("could not create thread");
                 return 1;
             }
+            
+            #ifdef _WIN64
+            WSADATA WSAData;
+            WSAStartup(MAKEWORD(2, 0), &WSAData);
+            #endif
+
+            SOCKET sockfd = server::CreateSocket();
+            // sockfd = server::SetSocketOptions(sockfd);
+            SOCKADDR_IN servaddr = server::CreateServerSinForNormalcast();
+            // SOCKADDR_IN cliaddr;
+            socklen_t len = sizeof(servaddr);
+            int n = 0;
+            char buffer_string[10000] = "\0";
+            server::BindingSocket(&sockfd, &servaddr);
+
             // pthread_join(sniffer_thread, NULL);
             std::chrono::duration<double, std::milli> duration;
             std::chrono::system_clock::time_point time;
@@ -82,10 +98,17 @@ int test2(int argc, char** argv){
                     std::this_thread::sleep_for(std::chrono::milliseconds{100});
                     duration = std::chrono::system_clock::now() - time;
                 }
-                sys.display_system_info();
+                // sys.display_system_info();
                 // sys->display_system_info();
+                
+                n = recvfrom(sockfd, (char *)buffer_string, 1024, 0, ( struct sockaddr *) &servaddr, &len);
+                sendto(sockfd, (const char *) sys.to_json().c_str(), strlen(sys.to_json().c_str()), 0, (const struct sockaddr *) &servaddr, len);
             }
             // delete sys;
+            
+            #ifdef _WIN64
+            WSACleanup();
+            #endif
         }
         else if(strcmp(argv[1], "master") == 0){
             monitoring::System sys = monitoring::System();
@@ -100,6 +123,21 @@ int test2(int argc, char** argv){
                 return 1;
             }
 
+            #ifdef _WIN64
+            WSADATA WSAData;
+            WSAStartup(MAKEWORD(2, 0), &WSAData);
+            #endif
+
+            SOCKET sockfd = server::CreateSocket();
+            sockfd = server::SetSocketOptions(sockfd);
+            SOCKADDR_IN servaddr = server::CreateServerSinForBroadcast();
+            SOCKADDR_IN cliaddr;
+            socklen_t len = sizeof(cliaddr);
+            int n = 0;
+            char buffer_string[10000] = "\0";
+            std::string buffer_string2;
+            server::BindingSocket(&sockfd, &servaddr);
+
             std::chrono::duration<double, std::milli> duration;
             std::chrono::system_clock::time_point time;
             while(1){
@@ -109,16 +147,22 @@ int test2(int argc, char** argv){
                     std::this_thread::sleep_for(std::chrono::milliseconds{100});
                     duration = std::chrono::system_clock::now() - time;
                 }
+
+                sendto(sockfd, (const char *)"get info", strlen("get info"), 0, (const struct sockaddr *) &cliaddr, len);
+                n = recvfrom(sockfd, (char *)buffer_string, 1024, 0, ( struct sockaddr *) &cliaddr, &len);
+                buffer_string[n] = '\0';
+                buffer_string2.assign(buffer_string);
+                sys2.from_json(buffer_string2);
+
                 sys.display_system_info();
-                std::cout << sys.to_json() << std::endl;
-                sys2.from_json(sys.to_json());
-                // std::cout << "==================" << std::endl;
-                // // std::cout << sys2->to_json() << std::endl;
-                // sys2.display_system_info();
-                // std::cout << "++++++++++++++++++" << std::endl;
-                // sys2.from_bytes(sys.to_bytes());
-                // sys2.to_bytes();
+                std::cout << "==================" << std::endl;
+                sys2.display_system_info();
+                std::cout << "++++++++++++++++++" << std::endl;
             }
+
+            #ifdef _WIN64
+            WSACleanup();
+            #endif
         }
     }
 
