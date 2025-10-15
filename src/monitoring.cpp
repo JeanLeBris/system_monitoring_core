@@ -101,7 +101,7 @@ namespace monitoring{
             std::cout << this->get_logical_disk_info().data[i].volume_name;
             std::cout << "\t" << this->get_logical_disk_info().data[i].total_space / std::pow(1024, 2) << "GB";
             std::cout << "\t" << this->get_logical_disk_info().data[i].free_space / std::pow(1024, 2) << "GB";
-            std::cout << "\t" << duration.count();
+            // std::cout << "\t" << duration.count();
             std::cout << "\t" << (long long) (std::abs(this->get_logical_disk_info().data[i].free_space - this->get_logical_disk_info().data[i].last_free_space) / duration.count()) << "kB/s" << std::endl;
         }
         std::cout << "physical disk info" << std::endl;

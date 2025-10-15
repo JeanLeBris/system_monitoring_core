@@ -3,6 +3,12 @@
 
 #include <string>
 
+#ifdef __linux__
+#define SOCKET int
+#define SOCKADDR_IN sockaddr_in
+#define SOCKADDR sockaddr
+#endif
+
 namespace server{
     /**
      * Create a socket descriptor
