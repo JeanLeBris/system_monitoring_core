@@ -397,4 +397,71 @@ namespace monitoring{
         // std::cout << this->hostname << std::endl;
         // std::cout << std::to_string(this->cpu.cpu_load_percentage) << std::endl;
     }
+
+    std::vector<uint8_t> System::append_to_byte_array(std::vector<uint8_t> data, uint64_t size, uint8_t* byte_array){
+        uint8_t *a_size = (uint8_t*) &size;
+        data.insert(data.end(), a_size, a_size + 8);
+        data.insert(data.end(), byte_array, byte_array + size);
+        return data;
+    }
+    
+    std::vector<uint8_t> System::to_bytes(){
+        std::vector<uint8_t> output;
+        uint64_t size = 0;
+        uint8_t *a_size = (uint8_t*) &size;
+        // uint64_t size2 = 0;
+
+        size = sizeof(*this);
+        // size = 999999999;
+        // output.insert(output.end(), a_size, a_size+8);
+        // size2 = *(uint64_t*) a_size;
+        // size2 = *(uint64_t*) output.cbegin().base();
+
+        // std::cout << sizeof(*this) << std::endl;
+        // std::cout << size << std::endl;
+        // std::cout << size2 << std::endl;
+        // std::cout << (int) a_size[8] << std::endl;
+        // output.insert(output.end(), (uint8_t*) this, ((uint8_t*) this) + size);
+        output = append_to_byte_array(output, size, (uint8_t*) this);
+
+        size = this->hostname.size()+1;
+        output = append_to_byte_array(output, size, (uint8_t*) this->hostname.c_str());
+
+        // size = (uint64_t) this->logical_disk.size;
+        // output.insert(output.end(), a_size, a_size + 8);
+        
+        for(int i = 0; i < this->logical_disk.size; i++){
+            size = sizeof(this->logical_disk.data[i]);
+            output = append_to_byte_array(output, size, (uint8_t*) &(this->logical_disk.data[i]));
+
+            size = this->logical_disk.data[i].id.size()+1;
+            output = append_to_byte_array(output, size, (uint8_t*) this->logical_disk.data[i].id.c_str());
+
+            size = this->logical_disk.data[i].volume_name.size()+1;
+            output = append_to_byte_array(output, size, (uint8_t*) this->logical_disk.data[i].volume_name.c_str());
+        }
+
+        for(int i = 0; i < this->physical_disk.size; i++){
+            size = sizeof(this->physical_disk.data[i]);
+            output = append_to_byte_array(output, size, (uint8_t*) &(this->physical_disk.data[i]));
+
+            size = this->physical_disk.data[i].caption.size()+1;
+            output = append_to_byte_array(output, size, (uint8_t*) this->physical_disk.data[i].caption.c_str());
+        }
+        // std::cout << sizeof(int) << std::endl;
+
+        // monitoring::System sys3;
+        // sys3 = *(monitoring::System*) (output.cbegin().base()+8);
+
+        // std::cout << sys3.get_hostname() << std::endl;
+
+        return output;
+    }
+    
+    void System::from_bytes(std::vector<uint8_t> data){
+        for(int i = 0; i < data.size(); i++){
+            std::cout << "/" << (int) data.at(i);
+        }
+        std::cout << std::endl;
+    }
 }

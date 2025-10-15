@@ -112,10 +112,12 @@ int test2(int argc, char** argv){
                 sys.display_system_info();
                 // std::cout << sys.to_json() << std::endl;
                 sys2.from_json(sys.to_json());
-                std::cout << "==================" << std::endl;
-                // std::cout << sys2->to_json() << std::endl;
-                sys2.display_system_info();
-                std::cout << "++++++++++++++++++" << std::endl;
+                // std::cout << "==================" << std::endl;
+                // // std::cout << sys2->to_json() << std::endl;
+                // sys2.display_system_info();
+                // std::cout << "++++++++++++++++++" << std::endl;
+                sys2.from_bytes(sys.to_bytes());
+                // sys2.to_bytes();
             }
         }
     }

@@ -3,6 +3,7 @@
 
 #include <string>
 #include <chrono>
+#include <vector>
 
 namespace monitoring{
     struct cpu_type{
@@ -204,6 +205,18 @@ namespace monitoring{
          * Get the system's data from a json string
          */
         void from_json(std::string data);
+
+        std::vector<uint8_t> append_to_byte_array(std::vector<uint8_t> data, uint64_t size, uint8_t* byte_array);
+
+        /**
+         * Get a byte array from the system's data
+         */
+        std::vector<uint8_t> to_bytes();
+
+        /**
+         * Get the system's data from a byte array
+         */
+        void from_bytes(std::vector<uint8_t> data);
     };
 }
 
