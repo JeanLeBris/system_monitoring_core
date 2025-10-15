@@ -81,8 +81,8 @@ int test2(int argc, char** argv){
             SOCKET sockfd = server::CreateSocket();
             // sockfd = server::SetSocketOptions(sockfd);
             SOCKADDR_IN servaddr = server::CreateServerSinForNormalcast();
-            // SOCKADDR_IN cliaddr;
-            socklen_t len = sizeof(servaddr);
+            SOCKADDR_IN cliaddr;
+            socklen_t len = sizeof(cliaddr);
             int n = 0;
             char buffer_string[10000] = "\0";
             server::BindingSocket(&sockfd, &servaddr);
@@ -101,8 +101,8 @@ int test2(int argc, char** argv){
                 // sys.display_system_info();
                 // sys->display_system_info();
                 
-                n = recvfrom(sockfd, (char *)buffer_string, 1024, 0, ( struct sockaddr *) &servaddr, &len);
-                sendto(sockfd, (const char *) sys.to_json().c_str(), strlen(sys.to_json().c_str()), 0, (const struct sockaddr *) &servaddr, len);
+                n = recvfrom(sockfd, (char *)buffer_string, 1024, 0, ( struct sockaddr *) &cliaddr, &len);
+                sendto(sockfd, (const char *) sys.to_json().c_str(), strlen(sys.to_json().c_str()), 0, (const struct sockaddr *) &cliaddr, len);
             }
             // delete sys;
             
@@ -131,8 +131,7 @@ int test2(int argc, char** argv){
             SOCKET sockfd = server::CreateSocket();
             sockfd = server::SetSocketOptions(sockfd);
             SOCKADDR_IN servaddr = server::CreateServerSinForBroadcast();
-            SOCKADDR_IN cliaddr;
-            socklen_t len = sizeof(cliaddr);
+            socklen_t len = sizeof(servaddr);
             int n = 0;
             char buffer_string[10000] = "\0";
             std::string buffer_string2;
@@ -148,15 +147,16 @@ int test2(int argc, char** argv){
                     duration = std::chrono::system_clock::now() - time;
                 }
 
-                sendto(sockfd, (const char *)"get info", strlen("get info"), 0, (const struct sockaddr *) &cliaddr, len);
-                n = recvfrom(sockfd, (char *)buffer_string, 1024, 0, ( struct sockaddr *) &cliaddr, &len);
+                sendto(sockfd, (const char *)"get info", strlen("get info"), 0, (const struct sockaddr *) &servaddr, len);
+                n = recvfrom(sockfd, (char *)buffer_string, 10000, 0, ( struct sockaddr *) &servaddr, &len);
+                std::cout << n << std::endl;
                 buffer_string[n] = '\0';
                 buffer_string2.assign(buffer_string);
                 sys2.from_json(buffer_string2);
 
                 sys.display_system_info();
                 std::cout << "==================" << std::endl;
-                sys2.display_system_info();
+                // sys2.display_system_info();
                 std::cout << "++++++++++++++++++" << std::endl;
             }
 
