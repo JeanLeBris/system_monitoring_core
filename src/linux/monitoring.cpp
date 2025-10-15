@@ -100,8 +100,8 @@ namespace monitoring{
                 this->logical_disk.data[j].last_time = this->logical_disk.data[j].time - std::chrono::seconds{1};
                 this->logical_disk.data[j].id = converter::get_value_from_key(converted_result.data[i], "id");
                 this->logical_disk.data[j].volume_name = converter::get_value_from_key(converted_result.data[i], "name");
-                this->logical_disk.data[j].total_space = std::stoll(converter::get_value_from_key(converted_result.data[i], "total_space"));
-                this->logical_disk.data[j].free_space = std::stoll(converter::get_value_from_key(converted_result.data[i], "free_space"));
+                this->logical_disk.data[j].total_space = std::stoll(converter::get_value_from_key(converted_result.data[i], "total_space"))*512/1024;
+                this->logical_disk.data[j].free_space = std::stoll(converter::get_value_from_key(converted_result.data[i], "free_space"))*512/1024;
                 this->logical_disk.data[j].last_free_space = this->logical_disk.data[j].free_space;
                 // printf("/%d", converter::get_value_from_key(converted_result.data[j], "free_space").c_str()[converter::get_value_from_key(converted_result.data[j], "free_space").length()-1]);
                 j++;
@@ -125,7 +125,7 @@ namespace monitoring{
                         this->logical_disk.data[j].last_time = this->logical_disk.data[j].time;
                         this->logical_disk.data[j].last_free_space = this->logical_disk.data[j].free_space;
                         this->logical_disk.data[j].time = req_time;
-                        this->logical_disk.data[j].free_space = std::stoll(converter::get_value_from_key(converted_result.data[i], "free_space"));
+                        this->logical_disk.data[j].free_space = std::stoll(converter::get_value_from_key(converted_result.data[i], "free_space"))*512/1024;
                     }
                 }
             }
@@ -176,7 +176,7 @@ namespace monitoring{
             if(converter::get_value_from_key(converted_result.data[i], "type") == "physical"){
                 // std::cout << converter::get_value_from_key(converted_result.data[i], "type");
                 this->physical_disk.data[j].caption = converter::get_value_from_key(converted_result.data[i], "name");
-                this->physical_disk.data[j].total_space = std::stoll(converter::get_value_from_key(converted_result.data[i], "total_space"));
+                this->physical_disk.data[j].total_space = std::stoll(converter::get_value_from_key(converted_result.data[i], "total_space"))*512/1024;
                 // printf("/%d", converter::get_value_from_key(converted_result.data[j], "free_space").c_str()[converter::get_value_from_key(converted_result.data[j], "free_space").length()-1]);
                 j++;
             }
