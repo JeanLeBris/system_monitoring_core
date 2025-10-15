@@ -307,58 +307,60 @@ namespace converter{
         for(auto const& dir_entry1 : std::filesystem::directory_iterator("/sys/block")){
             pdisk_name = dir_entry1.path().filename().string();
 
-            buffer_string = exec("cat " + dir_entry1.path().string() + "/size");
-            buffer_int = buffer_string.find("\n");
-            buffer_string = buffer_string.substr(0, buffer_int);
-        
-            output.size++;
-            output.data = (organized_data*) realloc(output.data, output.size*sizeof(*output.data));
-            output.data[output.size-1].size = 3;
+            if(pdisk_name.find("loop") == pdisk_name.npos){
+                buffer_string = exec("cat " + dir_entry1.path().string() + "/size");
+                buffer_int = buffer_string.find("\n");
+                buffer_string = buffer_string.substr(0, buffer_int);
+            
+                output.size++;
+                output.data = (organized_data*) realloc(output.data, output.size*sizeof(*output.data));
+                output.data[output.size-1].size = 3;
 
-            strcpy(output.data[iterator].keys[0], "type");
-            strcpy(output.data[iterator].values[0], "physical");
-            strcpy(output.data[iterator].keys[1], "name");
-            strcpy(output.data[iterator].values[1], pdisk_name.c_str());
-            strcpy(output.data[iterator].keys[2], "total_space");
-            strcpy(output.data[iterator].values[2], buffer_string.c_str());
+                strcpy(output.data[iterator].keys[0], "type");
+                strcpy(output.data[iterator].values[0], "physical");
+                strcpy(output.data[iterator].keys[1], "name");
+                strcpy(output.data[iterator].values[1], pdisk_name.c_str());
+                strcpy(output.data[iterator].keys[2], "total_space");
+                strcpy(output.data[iterator].values[2], buffer_string.c_str());
 
-            iterator++;
+                iterator++;
 
-            for(auto const& dir_entry2 : std::filesystem::directory_iterator(dir_entry1)){
-                if(dir_entry2.path().filename().string().find(pdisk_name) != std::string::npos){
-                    ldisk_name = dir_entry2.path().filename().string();
+                for(auto const& dir_entry2 : std::filesystem::directory_iterator(dir_entry1)){
+                    if(dir_entry2.path().filename().string().find(pdisk_name) != std::string::npos){
+                        ldisk_name = dir_entry2.path().filename().string();
 
-                    buffer_string = exec("cat " + dir_entry2.path().string() + "/size");
-                    buffer_int = buffer_string.find("\n");
-                    buffer_string = buffer_string.substr(0, buffer_int);
-                
-                    output.size++;
-                    output.data = (organized_data*) realloc(output.data, output.size*sizeof(*output.data));
-                    output.data[output.size-1].size = 5;
+                        buffer_string = exec("cat " + dir_entry2.path().string() + "/size");
+                        buffer_int = buffer_string.find("\n");
+                        buffer_string = buffer_string.substr(0, buffer_int);
+                    
+                        output.size++;
+                        output.data = (organized_data*) realloc(output.data, output.size*sizeof(*output.data));
+                        output.data[output.size-1].size = 5;
 
-                    strcpy(output.data[iterator].keys[0], "type");
-                    strcpy(output.data[iterator].values[0], "logical");
-                    strcpy(output.data[iterator].keys[1], "name");
-                    strcpy(output.data[iterator].values[1], ldisk_name.c_str());
-                    strcpy(output.data[iterator].keys[2], "total_space");
-                    strcpy(output.data[iterator].values[2], buffer_string.c_str());
+                        strcpy(output.data[iterator].keys[0], "type");
+                        strcpy(output.data[iterator].values[0], "logical");
+                        strcpy(output.data[iterator].keys[1], "name");
+                        strcpy(output.data[iterator].values[1], ldisk_name.c_str());
+                        strcpy(output.data[iterator].keys[2], "total_space");
+                        strcpy(output.data[iterator].values[2], buffer_string.c_str());
 
-                    // Modify this to get the free space in the disk
-                    buffer_string = exec("cat " + dir_entry2.path().string() + "/size");
-                    buffer_int = buffer_string.find("\n");
-                    buffer_string = buffer_string.substr(0, buffer_int);
-                
-                    strcpy(output.data[iterator].keys[3], "free_space");
-                    strcpy(output.data[iterator].values[3], buffer_string.c_str());
+                        // Modify this to get the free space in the disk
+                        buffer_string = exec("cat " + dir_entry2.path().string() + "/size");
+                        buffer_int = buffer_string.find("\n");
+                        buffer_string = buffer_string.substr(0, buffer_int);
+                    
+                        strcpy(output.data[iterator].keys[3], "free_space");
+                        strcpy(output.data[iterator].values[3], buffer_string.c_str());
 
-                    buffer_string = exec("cat " + dir_entry2.path().string() + "/partition");
-                    buffer_int = buffer_string.find("\n");
-                    buffer_string = buffer_string.substr(0, buffer_int);
+                        buffer_string = exec("cat " + dir_entry2.path().string() + "/partition");
+                        buffer_int = buffer_string.find("\n");
+                        buffer_string = buffer_string.substr(0, buffer_int);
 
-                    strcpy(output.data[iterator].keys[4], "id");
-                    strcpy(output.data[iterator].values[4], buffer_string.c_str());
+                        strcpy(output.data[iterator].keys[4], "id");
+                        strcpy(output.data[iterator].values[4], buffer_string.c_str());
 
-                    iterator++;
+                        iterator++;
+                    }
                 }
             }
         }
