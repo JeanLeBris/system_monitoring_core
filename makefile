@@ -1,8 +1,8 @@
 export OS
 export CC=g++
-export CFLAGS= -Wall -I include
+export CFLAGS= -Wall -I include -I lib/argparse/include
 # export LDFLAGS= -Wall -l argparse
-export LDFLAGS= -Wall
+export LDFLAGS= -Wall -L bin -l argparse -l deallocator
 export EXEC=test.exe
 SRCNAMES= main.cpp utils.cpp output_converter.cpp monitoring.cpp server.cpp
 export SRCDIR=src
@@ -56,23 +56,22 @@ ifeq ($(LIBRARY_TYPE), shared)
 else
 	ifeq ($(LIBRARY_TYPE), static)
 	else
-		LIBRARY_TYPE=shared
+		LIBRARY_TYPE=static
 	endif
 endif
 export LIBRARY_TYPE
 
-# compile:bin obj $(OBJNAMES)
-# compile:obj update $(OBJNAMES)
-compile:obj $(OBJNAMES)
-	$(CC) $(OBJ) -o $(EXEC) $(LDFLAGS)
+compile:bin obj update $(OBJNAMES)
+	$(CC) $(OBJ) -o $(BINDIR)/$(EXEC) $(LDFLAGS)
 
-# update:
-# 	git submodule update --recursive --remote
-# # 	$(CC) -c ./lib/deallocator/src/deallocator.cpp -o ./obj/deallocator.o
-# # # 	ar rcs ./bin/libdeallocator.a ./obj/deallocator.o
-# # 	$(CC) -fpic -shared ./obj/deallocator.o -o ./bin/libdeallocator.dll
-# 	@(cd ./lib/argparse && $(MAKE) compile)
-# 	$(COPYFILE) .$(FILE_SLASH)lib$(FILE_SLASH)argparse$(FILE_SLASH)bin$(FILE_SLASH)* .
+update:
+	git submodule update --recursive --remote
+# 	$(CC) -c ./lib/deallocator/src/deallocator.cpp -o ./obj/deallocator.o
+# # 	ar rcs ./bin/libdeallocator.a ./obj/deallocator.o
+# 	$(CC) -fpic -shared ./obj/deallocator.o -o ./bin/libdeallocator.dll
+	@(cd ./lib/argparse && $(MAKE) compile)
+	$(COPYFILE) .$(FILE_SLASH)lib$(FILE_SLASH)argparse$(FILE_SLASH)bin$(FILE_SLASH)* bin
+# 	$(COPYFILE) .$(FILE_SLASH)lib$(FILE_SLASH)deallocator$(FILE_SLASH)bin$(FILE_SLASH)* bin
 
 %.o:
 	$(CC) -c $(SRCDIR)/$(@:.o=.cpp) -o $(OBJDIR)/$@ $(CFLAGS)
@@ -94,12 +93,13 @@ clean:
 	- $(RMDIR) $(OBJDIR)$(FILE_SLASH)windows
 	- $(RMDIR) $(OBJDIR)$(FILE_SLASH)linux
 	- $(RMDIR) $(OBJDIR)
-# 	- $(RMFILE) $(BINDIR)$(FILE_SLASH)*
-# 	- $(RMDIR) $(BINDIR)
+	- $(RMFILE) $(BINDIR)$(FILE_SLASH)*
+	- $(RMDIR) $(BINDIR)
 	- $(RMFILE) *.exe
 	- $(RMFILE) *.dll
 	- $(RMFILE) *.a
 	- $(RMFILE) *.so
+	@(cd ./lib/argparse && $(MAKE) $@)
 
 
 
