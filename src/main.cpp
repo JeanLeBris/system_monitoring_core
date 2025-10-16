@@ -156,8 +156,8 @@ int test2(int argc, char** argv){
             // sys.display_system_info();
 
             // thread_args *args = (thread_args*) malloc(sizeof(thread_args));
-            pthread_t sniffer_thread, sniffer_thread_2;
-            if(pthread_create(&sniffer_thread, NULL, sys_updater, (void*) &sys) < 0){
+            pthread_t sniffer_thread_1, sniffer_thread_2;
+            if(pthread_create(&sniffer_thread_1, NULL, sys_updater, (void*) &sys) < 0){
                 perror("could not create thread");
                 return 1;
             }
