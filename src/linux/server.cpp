@@ -3,7 +3,7 @@
 
 #include <bits/stdc++.h>
 #include <stdlib.h>
-#include <unistd.h>
+// #include <unistd.h>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -35,23 +35,23 @@ namespace server{
         return sock;
     }
 
-    SOCKADDR_IN CreateServerSinForBroadcast(){
+    SOCKADDR_IN CreateServerSinForBroadcast(uint16_t port){
         sockaddr_in sin;
         // sin.sin_addr.s_addr = INADDR_ANY;   // inet_addr(SIN_ADDR);
         // sin.sin_addr.s_addr = inet_addr("192.168.1.255");
         sin.sin_addr.s_addr = htonl(INADDR_BROADCAST);
         sin.sin_family = AF_INET;
-        sin.sin_port = htons(4149);
+        sin.sin_port = htons(port);
         return sin;
     }
 
-    SOCKADDR_IN CreateServerSinForNormalcast(){
+    SOCKADDR_IN CreateServerSinForNormalcast(uint16_t port){
         SOCKADDR_IN sin;
         sin.sin_addr.s_addr = INADDR_ANY;   // inet_addr(SIN_ADDR);
         // sin.sin_addr.s_addr = inet_addr("192.168.1.255");
         // sin.sin_addr.s_addr = htonl(INADDR_BROADCAST);
         sin.sin_family = AF_INET;
-        sin.sin_port = htons(4149);
+        sin.sin_port = htons(port);
         return sin;
     }
 

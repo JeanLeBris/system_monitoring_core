@@ -2,6 +2,7 @@
 #define SYSTEM_MONITORING_SERVER_HPP
 
 #include <string>
+#include <cstdint>
 
 #ifdef _WIN64
 #include <winsock2.h>
@@ -34,12 +35,12 @@ namespace server{
     /**
      * Filling server information
      */
-    SOCKADDR_IN CreateServerSinForBroadcast();
+    SOCKADDR_IN CreateServerSinForBroadcast(uint16_t port);
 
     /**
      * Filling server information
      */
-    SOCKADDR_IN CreateServerSinForNormalcast();
+    SOCKADDR_IN CreateServerSinForNormalcast(uint16_t port);
 
     /**
      * Bind a socket with an address
