@@ -131,7 +131,7 @@ int test2(int argc, char** argv){
             SOCKET sockfd = server::CreateSocket();
             sockfd = server::SetSocketOptions(sockfd);
             SOCKADDR_IN servaddr = server::CreateServerSinForBroadcast();
-            servaddr.sin_addr.s_addr = inet_addr("192.168.1.255");
+            // servaddr.sin_addr.s_addr = inet_addr("192.168.1.255");
             socklen_t len = sizeof(servaddr);
             int n = 0;
             char buffer_string[10000] = "\0";

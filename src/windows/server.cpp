@@ -31,7 +31,14 @@ namespace server{
         SOCKADDR_IN sin;
         // sin.sin_addr.s_addr = INADDR_ANY;   // inet_addr(SIN_ADDR);
         // sin.sin_addr.s_addr = inet_addr("192.168.1.255");
+        // sin.sin_addr.s_addr = inet_addr("255.255.255.255");
+        // sin.sin_addr.s_addr = htonl(INADDR_BROADCAST);
+        #ifdef _WIN64
+        sin.sin_addr.s_addr = inet_addr("192.168.1.255");
+        #endif
+        #ifdef __linux__
         sin.sin_addr.s_addr = htonl(INADDR_BROADCAST);
+        #endif
         sin.sin_family = AF_INET;
         sin.sin_port = htons(4149);
         return sin;
