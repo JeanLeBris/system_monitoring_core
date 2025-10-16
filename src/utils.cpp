@@ -37,3 +37,14 @@ int get_const_str_length(const char* input){
 
     return count;
 }
+
+long long get_stoll(std::string value, long long replacement){
+    if(value.length() > 0){
+        return std::stoll(value);
+    }
+    else{
+        return replacement;
+        // printf("this crashed in cpu basic stoll\n");
+        // exit(1);
+    }
+}

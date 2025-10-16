@@ -317,12 +317,16 @@ int test2(int argc, char** argv){
             monitoring::Environment env = monitoring::Environment();
             // env.push("other", new monitoring::System());
 
-            pthread_t sniffer_thread_1, sniffer_thread_2;
+            pthread_t sniffer_thread_1, sniffer_thread_2, sniffer_thread_3;
             if(pthread_create(&sniffer_thread_1, NULL, sys_updater, (void*) env.get_system_by_key("local")) < 0){
                 perror("could not create thread");
                 return 1;
             }
             // if(pthread_create(&sniffer_thread_2, NULL, master_connection_thread_sys_level, (void*) env.get_system_by_key("other")) < 0){
+            //     perror("could not create thread");
+            //     return 1;
+            // }
+            // if(pthread_create(&sniffer_thread_3, NULL, slave_connection_thread_env_level, (void*) &env) < 0){
             //     perror("could not create thread");
             //     return 1;
             // }

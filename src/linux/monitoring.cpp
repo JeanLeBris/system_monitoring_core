@@ -18,13 +18,13 @@ namespace monitoring{
         converter::organized_data_array converted_result = converter::linux_stat_converter(exec("cat /proc/stat"));
         std::chrono::system_clock::time_point req_time = std::chrono::system_clock::now();
         // char cpu_data_types[7][30] = {"user", "nice", "system", "idle", "iowait", "irq", "softirq"};
-        long long user = stoll(converter::get_value_from_key(converted_result.data[0], "user"));
-        long long nice = stoll(converter::get_value_from_key(converted_result.data[0], "nice"));
-        long long system = stoll(converter::get_value_from_key(converted_result.data[0], "system"));
-        long long idle = stoll(converter::get_value_from_key(converted_result.data[0], "idle"));
-        long long iowait = stoll(converter::get_value_from_key(converted_result.data[0], "iowait"));
-        long long irq = stoll(converter::get_value_from_key(converted_result.data[0], "irq"));
-        long long softirq = stoll(converter::get_value_from_key(converted_result.data[0], "softirq"));
+        long long user = std::stoll(converter::get_value_from_key(converted_result.data[0], "user"));
+        long long nice = std::stoll(converter::get_value_from_key(converted_result.data[0], "nice"));
+        long long system = std::stoll(converter::get_value_from_key(converted_result.data[0], "system"));
+        long long idle = std::stoll(converter::get_value_from_key(converted_result.data[0], "idle"));
+        long long iowait = std::stoll(converter::get_value_from_key(converted_result.data[0], "iowait"));
+        long long irq = std::stoll(converter::get_value_from_key(converted_result.data[0], "irq"));
+        long long softirq = std::stoll(converter::get_value_from_key(converted_result.data[0], "softirq"));
 
         // this->cpu_load_percentage = 100 * (user + nice + system + iowait + irq + softirq) / (user + nice + system + idle + iowait + irq + softirq);
         this->cpu.time = req_time;
@@ -42,13 +42,13 @@ namespace monitoring{
         converter::organized_data_array converted_result = converter::linux_stat_converter(exec("cat /proc/stat"));
         std::chrono::system_clock::time_point req_time = std::chrono::system_clock::now();
         // char cpu_data_types[7][30] = {"user", "nice", "system", "idle", "iowait", "irq", "softirq"};
-        long long user = stoll(converter::get_value_from_key(converted_result.data[0], "user"));
-        long long nice = stoll(converter::get_value_from_key(converted_result.data[0], "nice"));
-        long long system = stoll(converter::get_value_from_key(converted_result.data[0], "system"));
-        long long idle = stoll(converter::get_value_from_key(converted_result.data[0], "idle"));
-        long long iowait = stoll(converter::get_value_from_key(converted_result.data[0], "iowait"));
-        long long irq = stoll(converter::get_value_from_key(converted_result.data[0], "irq"));
-        long long softirq = stoll(converter::get_value_from_key(converted_result.data[0], "softirq"));
+        long long user = std::stoll(converter::get_value_from_key(converted_result.data[0], "user"));
+        long long nice = std::stoll(converter::get_value_from_key(converted_result.data[0], "nice"));
+        long long system = std::stoll(converter::get_value_from_key(converted_result.data[0], "system"));
+        long long idle = std::stoll(converter::get_value_from_key(converted_result.data[0], "idle"));
+        long long iowait = std::stoll(converter::get_value_from_key(converted_result.data[0], "iowait"));
+        long long irq = std::stoll(converter::get_value_from_key(converted_result.data[0], "irq"));
+        long long softirq = std::stoll(converter::get_value_from_key(converted_result.data[0], "softirq"));
 
         // this->cpu_load_percentage = 100 * (user + nice + system + iowait + irq + softirq) / (user + nice + system + idle + iowait + irq + softirq);
         this->cpu.last_time = this->cpu.time;
@@ -64,13 +64,13 @@ namespace monitoring{
 
     void System::update_total_ram(){
         converter::organized_data_array converted_result = converter::linux_meminfo_converter(exec("cat /proc/meminfo"));
-        this->ram.total_ram = stoll(converter::get_value_from_key(converted_result.data[0], "MemTotal"));
+        this->ram.total_ram = std::stoll(converter::get_value_from_key(converted_result.data[0], "MemTotal"));
         free(converted_result.data);
     }
 
     void System::update_free_ram(){
         converter::organized_data_array converted_result = converter::linux_meminfo_converter(exec("cat /proc/meminfo"));
-        this->ram.free_ram = stoll(converter::get_value_from_key(converted_result.data[0], "MemFree"));
+        this->ram.free_ram = std::stoll(converter::get_value_from_key(converted_result.data[0], "MemFree"));
         free(converted_result.data);
     }
 

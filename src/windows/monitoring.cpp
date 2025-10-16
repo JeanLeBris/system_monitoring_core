@@ -78,7 +78,7 @@ namespace monitoring{
     void System::update_basic_cpu_load_percentage(){
         converter::organized_data_array converted_result = converter::wmic_converter(exec("wmic cpu get LoadPercentage /VALUE"));
         if(converter::get_value_from_key(converted_result.data[0], "LoadPercentage").length() > 0){
-            this->cpu.cpu_load_percentage = stoll(converter::get_value_from_key(converted_result.data[0], "LoadPercentage"));
+            this->cpu.cpu_load_percentage = std::stoll(converter::get_value_from_key(converted_result.data[0], "LoadPercentage"));
         }
         else{
             this->cpu.cpu_load_percentage = 0;
@@ -91,7 +91,7 @@ namespace monitoring{
     void System::update_cpu_load_percentage(){
         converter::organized_data_array converted_result = converter::wmic_converter(exec("wmic cpu get LoadPercentage /VALUE"));
         if(converter::get_value_from_key(converted_result.data[0], "LoadPercentage").length() > 0){
-            this->cpu.cpu_load_percentage = stoll(converter::get_value_from_key(converted_result.data[0], "LoadPercentage"));
+            this->cpu.cpu_load_percentage = std::stoll(converter::get_value_from_key(converted_result.data[0], "LoadPercentage"));
         }
         else{
             this->cpu.cpu_load_percentage = 0;
@@ -103,13 +103,13 @@ namespace monitoring{
 
     void System::update_total_ram(){
         converter::organized_data_array converted_result = converter::wmic_converter(exec("wmic computersystem get TotalPhysicalMemory /VALUE"));
-        this->ram.total_ram = stoll(converter::get_value_from_key(converted_result.data[0], "TotalPhysicalMemory")) / 1024;
+        this->ram.total_ram = std::stoll(converter::get_value_from_key(converted_result.data[0], "TotalPhysicalMemory")) / 1024;
         free(converted_result.data);
     }
 
     void System::update_free_ram(){
         converter::organized_data_array converted_result = converter::wmic_converter(exec("wmic OS get FreePhysicalMemory /VALUE"));
-        this->ram.free_ram = stoll(converter::get_value_from_key(converted_result.data[0], "FreePhysicalMemory"));
+        this->ram.free_ram = std::stoll(converter::get_value_from_key(converted_result.data[0], "FreePhysicalMemory"));
         free(converted_result.data);
     }
 
