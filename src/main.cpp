@@ -62,6 +62,7 @@ void *master_connection_thread(void *_args){
     // monitoring::System *sys = args->sys;
     monitoring::System *sys = (monitoring::System*) _args;
     std::chrono::duration<double, std::milli> duration;
+    std::chrono::system_clock::time_point time;
     
     #ifdef _WIN64
     WSADATA WSAData;
@@ -75,13 +76,15 @@ void *master_connection_thread(void *_args){
     char buffer_string[10000] = "\0";
     std::string buffer_string2;
 
+    time = std::chrono::system_clock::now();
     while(1){
         // std::this_thread::sleep_for(std::chrono::milliseconds{500});
-        duration = std::chrono::system_clock::now() - sys->get_time();
+        duration = std::chrono::system_clock::now() - time;
         while(duration.count() < 500){
             std::this_thread::sleep_for(std::chrono::milliseconds{100});
-            duration = std::chrono::system_clock::now() - sys->get_time();
+            duration = std::chrono::system_clock::now() - time;
         }
+        time = std::chrono::system_clock::now();
         // printf("ping\n");
         
         // sys->update_info();
@@ -102,6 +105,47 @@ void *master_connection_thread(void *_args){
     pthread_exit(NULL);
 }
 
+void *slave_connection_thread(void *_args){
+    // thread_args *args = (thread_args*) _args;
+    // monitoring::System *sys = args->sys;
+    monitoring::System *sys = (monitoring::System*) _args;
+    std::chrono::duration<double, std::milli> duration;
+    
+    #ifdef _WIN64
+    WSADATA WSAData;
+    WSAStartup(MAKEWORD(2, 0), &WSAData);
+    #endif
+
+    server::connection conn = server::SetUpSlaveConnection();
+
+    // SOCKADDR_IN cliaddr;
+    socklen_t len = sizeof(conn.dest_addr);
+    int n = 0;
+    char buffer_string[10000] = "\0";
+
+    while(1){
+        // std::this_thread::sleep_for(std::chrono::milliseconds{500});
+        duration = std::chrono::system_clock::now() - sys->get_time();
+        while(duration.count() < 500){
+            std::this_thread::sleep_for(std::chrono::milliseconds{100});
+            duration = std::chrono::system_clock::now() - sys->get_time();
+        }
+        // printf("ping\n");
+        
+        // sys->update_info();
+
+        n = recvfrom(conn.sockfd, (char *)buffer_string, 1024, 0, ( struct sockaddr *) &(conn.dest_addr), &len);
+        sendto(conn.sockfd, (const char *) sys->to_json().c_str(), strlen(sys->to_json().c_str()), 0, (const struct sockaddr *) &(conn.dest_addr), len);
+    }
+    // free(args);
+
+    #ifdef _WIN64
+    WSACleanup();
+    #endif
+    
+    pthread_exit(NULL);
+}
+
 int test2(int argc, char** argv){
     if(argc == 2){
         if(strcmp(argv[1], "slave") == 0){
@@ -112,28 +156,32 @@ int test2(int argc, char** argv){
             // sys.display_system_info();
 
             // thread_args *args = (thread_args*) malloc(sizeof(thread_args));
-            pthread_t sniffer_thread;
+            pthread_t sniffer_thread, sniffer_thread_2;
             if(pthread_create(&sniffer_thread, NULL, sys_updater, (void*) &sys) < 0){
                 perror("could not create thread");
                 return 1;
             }
+            if(pthread_create(&sniffer_thread_2, NULL, slave_connection_thread, (void*) &sys) < 0){
+                perror("could not create thread");
+                return 1;
+            }
             
-            #ifdef _WIN64
-            WSADATA WSAData;
-            WSAStartup(MAKEWORD(2, 0), &WSAData);
-            #endif
+            // #ifdef _WIN64
+            // WSADATA WSAData;
+            // WSAStartup(MAKEWORD(2, 0), &WSAData);
+            // #endif
 
-            // SOCKET sockfd = server::CreateSocket();
-            // // sockfd = server::SetSocketOptions(sockfd);
-            // SOCKADDR_IN servaddr = server::CreateServerSinForNormalcast();
-            // server::BindingSocket(&sockfd, &servaddr);
+            // // SOCKET sockfd = server::CreateSocket();
+            // // // sockfd = server::SetSocketOptions(sockfd);
+            // // SOCKADDR_IN servaddr = server::CreateServerSinForNormalcast();
+            // // server::BindingSocket(&sockfd, &servaddr);
 
-            server::connection conn = server::SetUpSlaveConnection();
+            // server::connection conn = server::SetUpSlaveConnection();
 
-            // SOCKADDR_IN cliaddr;
-            socklen_t len = sizeof(conn.dest_addr);
-            int n = 0;
-            char buffer_string[10000] = "\0";
+            // // SOCKADDR_IN cliaddr;
+            // socklen_t len = sizeof(conn.dest_addr);
+            // int n = 0;
+            // char buffer_string[10000] = "\0";
 
             // pthread_join(sniffer_thread, NULL);
             std::chrono::duration<double, std::milli> duration;
@@ -149,8 +197,8 @@ int test2(int argc, char** argv){
                 // sys.display_system_info();
                 // sys->display_system_info();
                 
-                n = recvfrom(conn.sockfd, (char *)buffer_string, 1024, 0, ( struct sockaddr *) &(conn.dest_addr), &len);
-                sendto(conn.sockfd, (const char *) sys.to_json().c_str(), strlen(sys.to_json().c_str()), 0, (const struct sockaddr *) &(conn.dest_addr), len);
+                // n = recvfrom(conn.sockfd, (char *)buffer_string, 1024, 0, ( struct sockaddr *) &(conn.dest_addr), &len);
+                // sendto(conn.sockfd, (const char *) sys.to_json().c_str(), strlen(sys.to_json().c_str()), 0, (const struct sockaddr *) &(conn.dest_addr), len);
             }
             // delete sys;
             
