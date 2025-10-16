@@ -500,6 +500,15 @@ namespace monitoring{
         std::string output;
         std::string system_json;
 
+        output.append("{");
+
+        output.append("\"size\":");
+        output.append(std::to_string(this->size));
+        output.append("");
+        output.append(",");
+
+        output.append("\"data\":");
+
         output.append("[");
 
         for(int i = 0; i < this->size; i++){
@@ -527,11 +536,56 @@ namespace monitoring{
         }
 
         output.append("]");
+        output.append("}");
 
         return output;
     }
 
-    void Environment::from_json(std::string data){
+    void Environment::from_json(std::string data, char* source_ip){
+        std::string buffer_string = data;
+        int buffer_int = 0;
+        int size_buffer = 0;
 
+        int amount_of_systems = 0;
+        std::string buffer_ip;
+        int system_size = 0;
+        
+        buffer_int = buffer_string.find(":");
+        buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+        buffer_int = buffer_string.find(",");
+        amount_of_systems = std::stoi(buffer_string.substr(0, buffer_int));
+        buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+
+        buffer_int = buffer_string.find("[");
+        buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+
+        for(int i = 0; i < amount_of_systems; i++){
+            buffer_int = buffer_string.find(":");
+            buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+            buffer_int = buffer_string.find("\"");
+            buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+            buffer_int = buffer_string.find("\"");
+            buffer_ip = buffer_string.substr(0, buffer_int);
+            buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+
+            if(buffer_ip == "local"){
+                buffer_ip.assign(source_ip);
+            }
+
+            buffer_int = buffer_string.find(":");
+            buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+            buffer_int = buffer_string.find(",");
+            system_size = std::stoi(buffer_string.substr(0, buffer_int));
+            buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+
+            buffer_int = buffer_string.find(":");
+            buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+            // buffer_int = buffer_string.find(",");
+            this->get_system_by_key(buffer_ip)->from_json(buffer_string.substr(0, system_size));
+            buffer_string = buffer_string.substr(system_size+1, buffer_string.length());
+            
+            buffer_int = buffer_string.find("}");
+            buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+        }
     }
 }

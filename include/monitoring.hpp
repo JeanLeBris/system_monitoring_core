@@ -240,7 +240,7 @@ namespace monitoring{
         /**
          * Get the system's data from a json string
          */
-        void from_json(std::string data);
+        void from_json(std::string data, char* source_ip);
     };
 }
 
