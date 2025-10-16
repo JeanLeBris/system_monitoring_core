@@ -11,6 +11,7 @@
 #ifdef __linux__
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 #define SOCKET int
 #define SOCKADDR_IN sockaddr_in
 #define SOCKADDR sockaddr
