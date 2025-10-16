@@ -17,6 +17,10 @@
 #define SOCKADDR sockaddr
 #endif
 
+#define APP_PORT 4148
+#define SLAVE_PORT 4149
+// #define BROADCAST_ADDRESS "192.168.1.255"
+
 namespace server{
     struct connection{
         SOCKET sockfd;
@@ -57,6 +61,11 @@ namespace server{
      * Set up a slave socket
      */
     connection SetUpSlaveConnection();
+
+    /**
+     * Set up a app socket
+     */
+    connection SetUpAppConnection();
 }
 
 #endif

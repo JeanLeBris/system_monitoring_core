@@ -77,39 +77,25 @@ namespace monitoring{
 
     void System::update_basic_cpu_load_percentage(){
         converter::organized_data_array converted_result = converter::wmic_converter(exec("wmic cpu get LoadPercentage /VALUE"));
-        if(converter::get_value_from_key(converted_result.data[0], "LoadPercentage").length() > 0){
-            this->cpu.cpu_load_percentage = std::stoll(converter::get_value_from_key(converted_result.data[0], "LoadPercentage"));
-        }
-        else{
-            this->cpu.cpu_load_percentage = 0;
-            // printf("this crashed in cpu basic stoll\n");
-            // exit(1);
-        }
+        this->cpu.cpu_load_percentage = get_stoll(converter::get_value_from_key(converted_result.data[0], "LoadPercentage"));
         free(converted_result.data);
     }
 
     void System::update_cpu_load_percentage(){
         converter::organized_data_array converted_result = converter::wmic_converter(exec("wmic cpu get LoadPercentage /VALUE"));
-        if(converter::get_value_from_key(converted_result.data[0], "LoadPercentage").length() > 0){
-            this->cpu.cpu_load_percentage = std::stoll(converter::get_value_from_key(converted_result.data[0], "LoadPercentage"));
-        }
-        else{
-            this->cpu.cpu_load_percentage = 0;
-            // printf("this crashed in cpu stoll\n");
-            // exit(1);
-        }
+        this->cpu.cpu_load_percentage = get_stoll(converter::get_value_from_key(converted_result.data[0], "LoadPercentage"));
         free(converted_result.data);
     }
 
     void System::update_total_ram(){
         converter::organized_data_array converted_result = converter::wmic_converter(exec("wmic computersystem get TotalPhysicalMemory /VALUE"));
-        this->ram.total_ram = std::stoll(converter::get_value_from_key(converted_result.data[0], "TotalPhysicalMemory")) / 1024;
+        this->ram.total_ram = get_stoll(converter::get_value_from_key(converted_result.data[0], "TotalPhysicalMemory")) / 1024;
         free(converted_result.data);
     }
 
     void System::update_free_ram(){
         converter::organized_data_array converted_result = converter::wmic_converter(exec("wmic OS get FreePhysicalMemory /VALUE"));
-        this->ram.free_ram = std::stoll(converter::get_value_from_key(converted_result.data[0], "FreePhysicalMemory"));
+        this->ram.free_ram = get_stoll(converter::get_value_from_key(converted_result.data[0], "FreePhysicalMemory"));
         free(converted_result.data);
     }
 
@@ -128,8 +114,8 @@ namespace monitoring{
             this->logical_disk.data[i].last_time = this->logical_disk.data[i].time - std::chrono::seconds{1};
             this->logical_disk.data[i].id = converter::get_value_from_key(converted_result.data[i], "DeviceID");
             this->logical_disk.data[i].volume_name = converter::get_value_from_key(converted_result.data[i], "VolumeName");
-            this->logical_disk.data[i].total_space = std::stoll(converter::get_value_from_key(converted_result.data[i], "Size")) / 1024;
-            this->logical_disk.data[i].free_space = std::stoll(converter::get_value_from_key(converted_result.data[i], "FreeSpace")) / 1024;
+            this->logical_disk.data[i].total_space = get_stoll(converter::get_value_from_key(converted_result.data[i], "Size")) / 1024;
+            this->logical_disk.data[i].free_space = get_stoll(converter::get_value_from_key(converted_result.data[i], "FreeSpace")) / 1024;
             this->logical_disk.data[i].last_free_space = this->logical_disk.data[i].free_space;
         }
 
@@ -147,7 +133,7 @@ namespace monitoring{
                     this->logical_disk.data[j].last_time = this->logical_disk.data[j].time;
                     this->logical_disk.data[j].last_free_space = this->logical_disk.data[j].free_space;
                     this->logical_disk.data[j].time = req_time;
-                    this->logical_disk.data[j].free_space = std::stoll(converter::get_value_from_key(converted_result.data[i], "FreeSpace")) / 1024;
+                    this->logical_disk.data[j].free_space = get_stoll(converter::get_value_from_key(converted_result.data[i], "FreeSpace")) / 1024;
                 }
             }
         }
@@ -166,8 +152,8 @@ namespace monitoring{
     //     for(int i = 0; i < result.size; i++){
     //         result.data[i].id = converter::get_value_from_key(converted_result.data[i], "DeviceID");
     //         result.data[i].volume_name = converter::get_value_from_key(converted_result.data[i], "VolumeName");
-    //         result.data[i].total_space = std::stoll(converter::get_value_from_key(converted_result.data[i], "Size"));
-    //         result.data[i].free_space = std::stoll(converter::get_value_from_key(converted_result.data[i], "FreeSpace"));
+    //         result.data[i].total_space = get_stoll(converter::get_value_from_key(converted_result.data[i], "Size"));
+    //         result.data[i].free_space = get_stoll(converter::get_value_from_key(converted_result.data[i], "FreeSpace"));
     //     }
 
     //     free(converted_result.data);
@@ -185,7 +171,7 @@ namespace monitoring{
         this->physical_disk.data = new physical_disk_type[this->physical_disk.size];
         for(int i = 0; i < this->physical_disk.size; i++){
             this->physical_disk.data[i].caption = converter::get_value_from_key(converted_result.data[i], "Caption");
-            this->physical_disk.data[i].total_space = std::stoll(converter::get_value_from_key(converted_result.data[i], "Size")) / 1024;
+            this->physical_disk.data[i].total_space = get_stoll(converter::get_value_from_key(converted_result.data[i], "Size")) / 1024;
         }
 
         free(converted_result.data);

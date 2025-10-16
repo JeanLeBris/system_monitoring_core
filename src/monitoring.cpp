@@ -251,13 +251,13 @@ namespace monitoring{
         buffer_int = buffer_string.find(":");
         buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
         buffer_int = buffer_string.find(",");
-        this->last_time = std::chrono::system_clock::time_point(std::chrono::nanoseconds(std::stoll(buffer_string.substr(0, buffer_int))));
+        this->last_time = std::chrono::system_clock::time_point(std::chrono::nanoseconds(get_stoll(buffer_string.substr(0, buffer_int))));
         buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
 
         buffer_int = buffer_string.find(":");
         buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
         buffer_int = buffer_string.find(",");
-        this->time = std::chrono::system_clock::time_point(std::chrono::nanoseconds(std::stoll(buffer_string.substr(0, buffer_int))));
+        this->time = std::chrono::system_clock::time_point(std::chrono::nanoseconds(get_stoll(buffer_string.substr(0, buffer_int))));
         buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
         
         buffer_int = buffer_string.find(":");
@@ -281,13 +281,13 @@ namespace monitoring{
         buffer_int = buffer_string.find(":");
         buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
         buffer_int = buffer_string.find(",");
-        this->ram.total_ram = std::stoll(buffer_string.substr(0, buffer_int));
+        this->ram.total_ram = get_stoll(buffer_string.substr(0, buffer_int));
         buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
         
         buffer_int = buffer_string.find(":");
         buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
         buffer_int = buffer_string.find("}");
-        this->ram.free_ram = std::stoll(buffer_string.substr(0, buffer_int));
+        this->ram.free_ram = get_stoll(buffer_string.substr(0, buffer_int));
         buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
         
         size_buffer = this->logical_disk.size;
@@ -329,31 +329,31 @@ namespace monitoring{
             buffer_int = buffer_string.find(":");
             buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
             buffer_int = buffer_string.find(",");
-            this->logical_disk.data[i].total_space = std::stoll(buffer_string.substr(0, buffer_int));
+            this->logical_disk.data[i].total_space = get_stoll(buffer_string.substr(0, buffer_int));
             buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
             
             buffer_int = buffer_string.find(":");
             buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
             buffer_int = buffer_string.find(",");
-            this->logical_disk.data[i].last_time = std::chrono::system_clock::time_point(std::chrono::nanoseconds(std::stoll(buffer_string.substr(0, buffer_int))));
+            this->logical_disk.data[i].last_time = std::chrono::system_clock::time_point(std::chrono::nanoseconds(get_stoll(buffer_string.substr(0, buffer_int))));
             buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
             
             buffer_int = buffer_string.find(":");
             buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
             buffer_int = buffer_string.find(",");
-            this->logical_disk.data[i].last_free_space = std::stoll(buffer_string.substr(0, buffer_int));
+            this->logical_disk.data[i].last_free_space = get_stoll(buffer_string.substr(0, buffer_int));
             buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
             
             buffer_int = buffer_string.find(":");
             buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
             buffer_int = buffer_string.find(",");
-            this->logical_disk.data[i].time = std::chrono::system_clock::time_point(std::chrono::nanoseconds(std::stoll(buffer_string.substr(0, buffer_int))));
+            this->logical_disk.data[i].time = std::chrono::system_clock::time_point(std::chrono::nanoseconds(get_stoll(buffer_string.substr(0, buffer_int))));
             buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
             
             buffer_int = buffer_string.find(":");
             buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
             buffer_int = buffer_string.find("}");
-            this->logical_disk.data[i].free_space = std::stoll(buffer_string.substr(0, buffer_int));
+            this->logical_disk.data[i].free_space = get_stoll(buffer_string.substr(0, buffer_int));
             buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
         }
         
@@ -389,7 +389,7 @@ namespace monitoring{
             buffer_int = buffer_string.find(":");
             buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
             buffer_int = buffer_string.find("}");
-            this->physical_disk.data[i].total_space = std::stoll(buffer_string.substr(0, buffer_int));
+            this->physical_disk.data[i].total_space = get_stoll(buffer_string.substr(0, buffer_int));
             buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
         }
 
@@ -469,6 +469,12 @@ namespace monitoring{
         this->size = 0;
         this->push("local", new System());
         this->get_system_by_key("local")->basic_update_info();
+    }
+
+    Environment::Environment(std::string key){
+        this->size = 0;
+        this->push(key, new System());
+        this->get_system_by_key(key)->basic_update_info();
     }
 
     Environment::~Environment(){

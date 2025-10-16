@@ -241,6 +241,50 @@ void *slave_connection_thread_env_level(void *_args){
     pthread_exit(NULL);
 }
 
+void *app_connection_thread_env_level(void *_args){
+    // thread_args *args = (thread_args*) _args;
+    // monitoring::System *sys = args->sys;
+    monitoring::Environment *env = (monitoring::Environment*) _args;
+    std::chrono::duration<double, std::milli> duration;
+    std::chrono::system_clock::time_point time;
+    
+    #ifdef _WIN64
+    WSADATA WSAData;
+    WSAStartup(MAKEWORD(2, 0), &WSAData);
+    #endif
+
+    server::connection conn = server::SetUpAppConnection();
+
+    // SOCKADDR_IN cliaddr;
+    socklen_t len = sizeof(conn.dest_addr);
+    int n = 0;
+    char buffer_string[10000] = "\0";
+
+    time = std::chrono::system_clock::now();
+    while(1){
+        // std::this_thread::sleep_for(std::chrono::milliseconds{500});
+        duration = std::chrono::system_clock::now() - time;
+        while(duration.count() < 500){
+            std::this_thread::sleep_for(std::chrono::milliseconds{100});
+            duration = std::chrono::system_clock::now() - time;
+        }
+        time = std::chrono::system_clock::now();
+        // printf("ping\n");
+        
+        // sys->update_info();
+
+        n = recvfrom(conn.sockfd, (char *)buffer_string, 1024, 0, ( struct sockaddr *) &(conn.dest_addr), &len);
+        sendto(conn.sockfd, (const char *) env->to_json().c_str(), strlen(env->to_json().c_str()), 0, (const struct sockaddr *) &(conn.dest_addr), len);
+    }
+    // free(args);
+
+    #ifdef _WIN64
+    WSACleanup();
+    #endif
+    
+    pthread_exit(NULL);
+}
+
 int test2(int argc, char** argv){
     if(argc == 2){
         if(strcmp(argv[1], "slave") == 0){
@@ -326,10 +370,10 @@ int test2(int argc, char** argv){
             //     perror("could not create thread");
             //     return 1;
             // }
-            // if(pthread_create(&sniffer_thread_3, NULL, slave_connection_thread_env_level, (void*) &env) < 0){
-            //     perror("could not create thread");
-            //     return 1;
-            // }
+            if(pthread_create(&sniffer_thread_3, NULL, app_connection_thread_env_level, (void*) &env) < 0){
+                perror("could not create thread");
+                return 1;
+            }
             if(pthread_create(&sniffer_thread_2, NULL, master_connection_thread_env_level, (void*) &env) < 0){
                 perror("could not create thread");
                 return 1;

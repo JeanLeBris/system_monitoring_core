@@ -18,13 +18,13 @@ namespace monitoring{
         converter::organized_data_array converted_result = converter::linux_stat_converter(exec("cat /proc/stat"));
         std::chrono::system_clock::time_point req_time = std::chrono::system_clock::now();
         // char cpu_data_types[7][30] = {"user", "nice", "system", "idle", "iowait", "irq", "softirq"};
-        long long user = std::stoll(converter::get_value_from_key(converted_result.data[0], "user"));
-        long long nice = std::stoll(converter::get_value_from_key(converted_result.data[0], "nice"));
-        long long system = std::stoll(converter::get_value_from_key(converted_result.data[0], "system"));
-        long long idle = std::stoll(converter::get_value_from_key(converted_result.data[0], "idle"));
-        long long iowait = std::stoll(converter::get_value_from_key(converted_result.data[0], "iowait"));
-        long long irq = std::stoll(converter::get_value_from_key(converted_result.data[0], "irq"));
-        long long softirq = std::stoll(converter::get_value_from_key(converted_result.data[0], "softirq"));
+        long long user = get_stoll(converter::get_value_from_key(converted_result.data[0], "user"));
+        long long nice = get_stoll(converter::get_value_from_key(converted_result.data[0], "nice"));
+        long long system = get_stoll(converter::get_value_from_key(converted_result.data[0], "system"));
+        long long idle = get_stoll(converter::get_value_from_key(converted_result.data[0], "idle"));
+        long long iowait = get_stoll(converter::get_value_from_key(converted_result.data[0], "iowait"));
+        long long irq = get_stoll(converter::get_value_from_key(converted_result.data[0], "irq"));
+        long long softirq = get_stoll(converter::get_value_from_key(converted_result.data[0], "softirq"));
 
         // this->cpu_load_percentage = 100 * (user + nice + system + iowait + irq + softirq) / (user + nice + system + idle + iowait + irq + softirq);
         this->cpu.time = req_time;
@@ -42,13 +42,13 @@ namespace monitoring{
         converter::organized_data_array converted_result = converter::linux_stat_converter(exec("cat /proc/stat"));
         std::chrono::system_clock::time_point req_time = std::chrono::system_clock::now();
         // char cpu_data_types[7][30] = {"user", "nice", "system", "idle", "iowait", "irq", "softirq"};
-        long long user = std::stoll(converter::get_value_from_key(converted_result.data[0], "user"));
-        long long nice = std::stoll(converter::get_value_from_key(converted_result.data[0], "nice"));
-        long long system = std::stoll(converter::get_value_from_key(converted_result.data[0], "system"));
-        long long idle = std::stoll(converter::get_value_from_key(converted_result.data[0], "idle"));
-        long long iowait = std::stoll(converter::get_value_from_key(converted_result.data[0], "iowait"));
-        long long irq = std::stoll(converter::get_value_from_key(converted_result.data[0], "irq"));
-        long long softirq = std::stoll(converter::get_value_from_key(converted_result.data[0], "softirq"));
+        long long user = get_stoll(converter::get_value_from_key(converted_result.data[0], "user"));
+        long long nice = get_stoll(converter::get_value_from_key(converted_result.data[0], "nice"));
+        long long system = get_stoll(converter::get_value_from_key(converted_result.data[0], "system"));
+        long long idle = get_stoll(converter::get_value_from_key(converted_result.data[0], "idle"));
+        long long iowait = get_stoll(converter::get_value_from_key(converted_result.data[0], "iowait"));
+        long long irq = get_stoll(converter::get_value_from_key(converted_result.data[0], "irq"));
+        long long softirq = get_stoll(converter::get_value_from_key(converted_result.data[0], "softirq"));
 
         // this->cpu_load_percentage = 100 * (user + nice + system + iowait + irq + softirq) / (user + nice + system + idle + iowait + irq + softirq);
         this->cpu.last_time = this->cpu.time;
@@ -64,13 +64,13 @@ namespace monitoring{
 
     void System::update_total_ram(){
         converter::organized_data_array converted_result = converter::linux_meminfo_converter(exec("cat /proc/meminfo"));
-        this->ram.total_ram = std::stoll(converter::get_value_from_key(converted_result.data[0], "MemTotal"));
+        this->ram.total_ram = get_stoll(converter::get_value_from_key(converted_result.data[0], "MemTotal"));
         free(converted_result.data);
     }
 
     void System::update_free_ram(){
         converter::organized_data_array converted_result = converter::linux_meminfo_converter(exec("cat /proc/meminfo"));
-        this->ram.free_ram = std::stoll(converter::get_value_from_key(converted_result.data[0], "MemFree"));
+        this->ram.free_ram = get_stoll(converter::get_value_from_key(converted_result.data[0], "MemFree"));
         free(converted_result.data);
     }
 
@@ -100,8 +100,8 @@ namespace monitoring{
                 this->logical_disk.data[j].last_time = this->logical_disk.data[j].time - std::chrono::seconds{1};
                 this->logical_disk.data[j].id = converter::get_value_from_key(converted_result.data[i], "id");
                 this->logical_disk.data[j].volume_name = converter::get_value_from_key(converted_result.data[i], "name");
-                this->logical_disk.data[j].total_space = std::stoll(converter::get_value_from_key(converted_result.data[i], "total_space"))*512/1024;
-                this->logical_disk.data[j].free_space = std::stoll(converter::get_value_from_key(converted_result.data[i], "free_space"))*512/1024;
+                this->logical_disk.data[j].total_space = get_stoll(converter::get_value_from_key(converted_result.data[i], "total_space"))*512/1024;
+                this->logical_disk.data[j].free_space = get_stoll(converter::get_value_from_key(converted_result.data[i], "free_space"))*512/1024;
                 this->logical_disk.data[j].last_free_space = this->logical_disk.data[j].free_space;
                 // printf("/%d", converter::get_value_from_key(converted_result.data[j], "free_space").c_str()[converter::get_value_from_key(converted_result.data[j], "free_space").length()-1]);
                 j++;
@@ -125,7 +125,7 @@ namespace monitoring{
                         this->logical_disk.data[j].last_time = this->logical_disk.data[j].time;
                         this->logical_disk.data[j].last_free_space = this->logical_disk.data[j].free_space;
                         this->logical_disk.data[j].time = req_time;
-                        this->logical_disk.data[j].free_space = std::stoll(converter::get_value_from_key(converted_result.data[i], "free_space"))*512/1024;
+                        this->logical_disk.data[j].free_space = get_stoll(converter::get_value_from_key(converted_result.data[i], "free_space"))*512/1024;
                     }
                 }
             }
@@ -145,8 +145,8 @@ namespace monitoring{
     //     for(int i = 0; i < result.size; i++){
     //         result.data[i].id = converter::get_value_from_key(converted_result.data[i], "DeviceID");
     //         result.data[i].volume_name = converter::get_value_from_key(converted_result.data[i], "VolumeName");
-    //         result.data[i].total_space = std::stoll(converter::get_value_from_key(converted_result.data[i], "Size"));
-    //         result.data[i].free_space = std::stoll(converter::get_value_from_key(converted_result.data[i], "FreeSpace"));
+    //         result.data[i].total_space = get_stoll(converter::get_value_from_key(converted_result.data[i], "Size"));
+    //         result.data[i].free_space = get_stoll(converter::get_value_from_key(converted_result.data[i], "FreeSpace"));
     //     }
 
     //     free(converted_result.data);
@@ -176,7 +176,7 @@ namespace monitoring{
             if(converter::get_value_from_key(converted_result.data[i], "type") == "physical"){
                 // std::cout << converter::get_value_from_key(converted_result.data[i], "type");
                 this->physical_disk.data[j].caption = converter::get_value_from_key(converted_result.data[i], "name");
-                this->physical_disk.data[j].total_space = std::stoll(converter::get_value_from_key(converted_result.data[i], "total_space"))*512/1024;
+                this->physical_disk.data[j].total_space = get_stoll(converter::get_value_from_key(converted_result.data[i], "total_space"))*512/1024;
                 // printf("/%d", converter::get_value_from_key(converted_result.data[j], "free_space").c_str()[converter::get_value_from_key(converted_result.data[j], "free_space").length()-1]);
                 j++;
             }

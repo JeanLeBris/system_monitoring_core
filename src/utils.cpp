@@ -47,4 +47,16 @@ long long get_stoll(std::string value, long long replacement){
         // printf("this crashed in cpu basic stoll\n");
         // exit(1);
     }
+    // long long output = 0;
+    // try{
+    //     output = std::stoll(value);
+    // }
+    // catch(...){
+
+    // }
+    // return output;
+}
+
+long long get_stoll(std::string value){
+    return get_stoll(value, 0);
 }

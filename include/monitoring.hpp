@@ -222,6 +222,7 @@ namespace monitoring{
 
         public:
         Environment();
+        Environment(std::string key);
         ~Environment();
 
         void push(std::string key, System* system);
