@@ -48,6 +48,8 @@ namespace monitoring{
 
     class System{
         private:
+        bool accessed;
+
         std::chrono::system_clock::time_point initial_time;
         std::chrono::system_clock::time_point last_time;
         std::chrono::system_clock::time_point time;
@@ -69,6 +71,13 @@ namespace monitoring{
         public:
         System();
         ~System();
+
+        /**
+         * Get the accessed value
+         */
+        bool get_accessed();
+
+
 
         /**
          * Update the system object time

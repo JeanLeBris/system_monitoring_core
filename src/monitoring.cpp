@@ -8,6 +8,7 @@
 
 namespace monitoring{
     System::System(){
+        this->accessed = false;
         this->logical_disk.size = 0;
         this->physical_disk.size = 0;
     }
@@ -15,6 +16,10 @@ namespace monitoring{
     System::~System(){
         delete[] this->logical_disk.data;
         delete[] this->physical_disk.data;
+    }
+
+    bool System::get_accessed(){
+        return this->accessed;
     }
 
     void System::update_basic_time(){
@@ -75,6 +80,8 @@ namespace monitoring{
         this->update_basic_logical_disk_info();
 
         this->update_basic_physical_disk_info();
+
+        this->accessed = true;
     }
 
     void System::update_info(){
