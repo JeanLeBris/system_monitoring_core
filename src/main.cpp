@@ -13,6 +13,7 @@
 #include "output_converter.hpp"
 #include "utils.hpp"
 #include "server.hpp"
+#include "argparse.hpp"
 
 int test1(int argc, char** argv){
     monitoring::System sys1 = monitoring::System();
@@ -286,145 +287,85 @@ void *app_connection_thread_env_level(void *_args){
 }
 
 int test2(int argc, char** argv){
-    if(argc == 2){
-        if(strcmp(argv[1], "slave") == 0){
-            // monitoring::System sys =  monitoring::System();
-            // sys.basic_update_info();
-            // // monitoring::System *sys = new monitoring::System;
-            // // sys.update_info();
-            // // sys.display_system_info();
+    auto parser = argparse::ArgumentParser(argv[0],
+                                           NULL,
+                                           "This is the system_monitoring's core",
+                                           "As this is just the core, it is not the GUI",
+                                           NULL,
+                                           "-",
+                                           NULL,
+                                           "0.1.0",
+                                           true,
+                                           true,
+                                           true);
+    
+    const char* choices1[2] = {"slave", "master"};
+    parser.add_argument("-m --mode", "store", 1, NULL, "slave", "string", 2, choices1, false, "server mode", NULL, NULL, 0);
 
-            monitoring::Environment env = monitoring::Environment();
+    argparse::ParsedArguments* parsed_args = parser.parse_args(argc, argv);
 
-            // thread_args *args = (thread_args*) malloc(sizeof(thread_args));
-            pthread_t sniffer_thread_1, sniffer_thread_2;
-            if(pthread_create(&sniffer_thread_1, NULL, sys_updater, (void*) env.get_system_by_key("local")) < 0){
-                perror("could not create thread");
-                return 1;
-            }
-            // if(pthread_create(&sniffer_thread_2, NULL, slave_connection_thread_sys_level, (void*) env.get_system_by_key("local")) < 0){
-            //     perror("could not create thread");
-            //     return 1;
-            // }
-            if(pthread_create(&sniffer_thread_2, NULL, slave_connection_thread_env_level, (void*) &env) < 0){
-                perror("could not create thread");
-                return 1;
-            }
-            
-            // #ifdef _WIN64
-            // WSADATA WSAData;
-            // WSAStartup(MAKEWORD(2, 0), &WSAData);
-            // #endif
+    // parsed_args->print_keys_and_values();
 
-            // // SOCKET sockfd = server::CreateSocket();
-            // // // sockfd = server::SetSocketOptions(sockfd);
-            // // SOCKADDR_IN servaddr = server::CreateServerSinForNormalcast();
-            // // server::BindingSocket(&sockfd, &servaddr);
+    // printf("Processing the arguments finished successfully %s\n", parsed_args->get_value_by_key("mode")._string);
 
-            // server::connection conn = server::SetUpSlaveConnection();
+    std::string mode = parsed_args->get_value_by_key("mode")._string;
 
-            // // SOCKADDR_IN cliaddr;
-            // socklen_t len = sizeof(conn.dest_addr);
-            // int n = 0;
-            // char buffer_string[10000] = "\0";
+    // std::cout << "Processing the arguments finished successfully " << mode << std::endl;
 
-            // pthread_join(sniffer_thread, NULL);
-            std::chrono::duration<double, std::milli> duration;
-            std::chrono::system_clock::time_point time;
-            while(1){
-                // std::this_thread::sleep_for(std::chrono::milliseconds{1000});
-                time = std::chrono::system_clock::now();
-                duration = std::chrono::system_clock::now() - time;
-                while(duration.count() < 1000){
-                    std::this_thread::sleep_for(std::chrono::milliseconds{100});
-                    duration = std::chrono::system_clock::now() - time;
-                }
-                // sys.display_system_info();
-                // sys->display_system_info();
-                
-                // n = recvfrom(conn.sockfd, (char *)buffer_string, 1024, 0, ( struct sockaddr *) &(conn.dest_addr), &len);
-                // sendto(conn.sockfd, (const char *) sys.to_json().c_str(), strlen(sys.to_json().c_str()), 0, (const struct sockaddr *) &(conn.dest_addr), len);
-            }
-            // delete sys;
-            
-            #ifdef _WIN64
-            WSACleanup();
-            #endif
+    if(mode == "slave"){
+        monitoring::Environment env = monitoring::Environment();
+
+        pthread_t sniffer_thread_1, sniffer_thread_2;
+        if(pthread_create(&sniffer_thread_1, NULL, sys_updater, (void*) env.get_system_by_key("local")) < 0){
+            perror("could not create thread");
+            return 1;
         }
-        else if(strcmp(argv[1], "master") == 0){
-            // monitoring::System sys = monitoring::System();
-            // sys.basic_update_info();
-            // // monitoring::System *sys2 = new monitoring::System;
-            // monitoring::System sys2 = monitoring::System();
-            // // sys2->basic_update_info();
-
-            monitoring::Environment env = monitoring::Environment();
-            // env.push("other", new monitoring::System());
-
-            pthread_t sniffer_thread_1, sniffer_thread_2, sniffer_thread_3;
-            if(pthread_create(&sniffer_thread_1, NULL, sys_updater, (void*) env.get_system_by_key("local")) < 0){
-                perror("could not create thread");
-                return 1;
-            }
-            // if(pthread_create(&sniffer_thread_2, NULL, master_connection_thread_sys_level, (void*) env.get_system_by_key("other")) < 0){
-            //     perror("could not create thread");
-            //     return 1;
-            // }
-            if(pthread_create(&sniffer_thread_3, NULL, app_connection_thread_env_level, (void*) &env) < 0){
-                perror("could not create thread");
-                return 1;
-            }
-            if(pthread_create(&sniffer_thread_2, NULL, master_connection_thread_env_level, (void*) &env) < 0){
-                perror("could not create thread");
-                return 1;
-            }
-
-            // #ifdef _WIN64
-            // WSADATA WSAData;
-            // WSAStartup(MAKEWORD(2, 0), &WSAData);
-            // #endif
-
-            // // SOCKET sockfd = server::CreateSocket();
-            // // sockfd = server::SetSocketOptions(sockfd);
-            // // SOCKADDR_IN servaddr = server::CreateServerSinForBroadcast();
-
-            // server::connection conn = server::SetUpMasterConnection();
-
-            // socklen_t len = sizeof(conn.dest_addr);
-            // int n = 0;
-            // char buffer_string[10000] = "\0";
-            // std::string buffer_string2;
-            // // server::BindingSocket(&sockfd, &servaddr);
-
-            std::chrono::duration<double, std::milli> duration;
-            std::chrono::system_clock::time_point time;
-            while(1){
-                time = std::chrono::system_clock::now();
+        if(pthread_create(&sniffer_thread_2, NULL, slave_connection_thread_env_level, (void*) &env) < 0){
+            perror("could not create thread");
+            return 1;
+        }
+        
+        std::chrono::duration<double, std::milli> duration;
+        std::chrono::system_clock::time_point time;
+        while(1){
+            // std::this_thread::sleep_for(std::chrono::milliseconds{1000});
+            time = std::chrono::system_clock::now();
+            duration = std::chrono::system_clock::now() - time;
+            while(duration.count() < 1000){
+                std::this_thread::sleep_for(std::chrono::milliseconds{100});
                 duration = std::chrono::system_clock::now() - time;
-                while(duration.count() < 1000){
-                    std::this_thread::sleep_for(std::chrono::milliseconds{100});
-                    duration = std::chrono::system_clock::now() - time;
-                }
-
-                // sendto(conn.sockfd, (const char *)"get info", strlen("get info"), 0, (const struct sockaddr *) &(conn.dest_addr), len);
-                // n = recvfrom(conn.sockfd, (char *)buffer_string, 10000, 0, ( struct sockaddr *) &(conn.dest_addr), &len);
-                // std::cout << inet_ntoa(conn.dest_addr.sin_addr) << std::endl;
-                // buffer_string[n] = '\0';
-                // buffer_string2.assign(buffer_string);
-                // sys2.from_json(buffer_string2);
-
-                // env.get_system_by_key("local")->display_system_info();
-                // std::cout << "==================" << std::endl;
-                // env.get_system_by_key("other")->display_system_info();
-                // std::cout << "++++++++++++++++++" << std::endl;
-                // std::cout << env.to_json() << std::endl;
-
-                env.display_environment_info();
             }
 
-            // #ifdef _WIN64
-            // WSACleanup();
-            // #endif
+        }
+    }
+    else if(mode == "master"){
+        monitoring::Environment env = monitoring::Environment();
+
+        pthread_t sniffer_thread_1, sniffer_thread_2, sniffer_thread_3;
+        if(pthread_create(&sniffer_thread_1, NULL, sys_updater, (void*) env.get_system_by_key("local")) < 0){
+            perror("could not create thread");
+            return 1;
+        }
+        if(pthread_create(&sniffer_thread_3, NULL, app_connection_thread_env_level, (void*) &env) < 0){
+            perror("could not create thread");
+            return 1;
+        }
+        if(pthread_create(&sniffer_thread_2, NULL, master_connection_thread_env_level, (void*) &env) < 0){
+            perror("could not create thread");
+            return 1;
+        }
+
+        std::chrono::duration<double, std::milli> duration;
+        std::chrono::system_clock::time_point time;
+        while(1){
+            time = std::chrono::system_clock::now();
+            duration = std::chrono::system_clock::now() - time;
+            while(duration.count() < 1000){
+                std::this_thread::sleep_for(std::chrono::milliseconds{100});
+                duration = std::chrono::system_clock::now() - time;
+            }
+
+            env.display_environment_info();
         }
     }
 
