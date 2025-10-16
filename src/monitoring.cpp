@@ -493,7 +493,21 @@ namespace monitoring{
                 return this->systems.at(i);
             }
         }
-        return NULL;
+        this->push(key, new System());
+        return this->get_system_by_key(key);
+    }
+
+    void Environment::display_environment_info(){
+        std::cout << "======================" << std::endl;
+
+        for(int i = 0; i < this->size; i++){
+            std::cout << "ip" << std::endl;
+            std::cout << "\t" << this->keys.at(i) << std::endl;
+            this->systems.at(i)->display_system_info();
+            std::cout << std::endl;
+        }
+
+        std::cout << "======================" << std::endl;
     }
 
     std::string Environment::to_json(){

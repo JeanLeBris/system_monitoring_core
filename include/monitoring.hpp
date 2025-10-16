@@ -233,6 +233,13 @@ namespace monitoring{
 
 
         /**
+         * Display the system's information basically
+         */
+        void display_environment_info();
+
+
+
+        /**
          * Get a json string from the system's data
          */
         std::string to_json();

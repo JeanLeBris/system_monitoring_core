@@ -315,7 +315,7 @@ int test2(int argc, char** argv){
             // // sys2->basic_update_info();
 
             monitoring::Environment env = monitoring::Environment();
-            env.push("other", new monitoring::System());
+            // env.push("other", new monitoring::System());
 
             pthread_t sniffer_thread_1, sniffer_thread_2;
             if(pthread_create(&sniffer_thread_1, NULL, sys_updater, (void*) env.get_system_by_key("local")) < 0){
@@ -368,8 +368,10 @@ int test2(int argc, char** argv){
                 // env.get_system_by_key("local")->display_system_info();
                 // std::cout << "==================" << std::endl;
                 // env.get_system_by_key("other")->display_system_info();
-                std::cout << "++++++++++++++++++" << std::endl;
-                std::cout << env.to_json() << std::endl;
+                // std::cout << "++++++++++++++++++" << std::endl;
+                // std::cout << env.to_json() << std::endl;
+
+                env.display_environment_info();
             }
 
             // #ifdef _WIN64
