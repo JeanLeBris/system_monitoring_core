@@ -16,6 +16,11 @@
 #endif
 
 namespace server{
+    struct connection{
+        SOCKET sockfd;
+        SOCKADDR_IN dest_addr;
+    };
+
     /**
      * Create a socket descriptor
      */
@@ -40,6 +45,16 @@ namespace server{
      * Bind a socket with an address
      */
     void BindingSocket(SOCKET *fdsocket, SOCKADDR_IN *sin);
+
+    /**
+     * Set up a master socket
+     */
+    connection SetUpMasterConnection();
+
+    /**
+     * Set up a slave socket
+     */
+    connection SetUpSlaveConnection();
 }
 
 #endif
