@@ -301,16 +301,14 @@ int test2(int argc, char** argv){
     
     const char* choices1[2] = {"slave", "master"};
     parser.add_argument("-m --mode", "store", 1, NULL, "slave", "string", 2, choices1, false, "server mode", NULL, NULL, 0);
+    parser.add_argument("-ip --ip-addresses", "store", 1, NULL, "", "string", 0, NULL, false, "ip addresses file", NULL, NULL, 0);
 
     argparse::ParsedArguments* parsed_args = parser.parse_args(argc, argv);
 
-    // parsed_args->print_keys_and_values();
-
-    // printf("Processing the arguments finished successfully %s\n", parsed_args->get_value_by_key("mode")._string);
-
     std::string mode = parsed_args->get_value_by_key("mode")._string;
+    std::string ip_addresses_file = parsed_args->get_value_by_key("ip-addresses")._string;
 
-    // std::cout << "Processing the arguments finished successfully " << mode << std::endl;
+    std::vector<std::string> ip_addresses = get_ip_addresses(ip_addresses_file);
 
     if(mode == "slave"){
         monitoring::Environment env = monitoring::Environment();
