@@ -495,4 +495,43 @@ namespace monitoring{
         }
         return NULL;
     }
+
+    std::string Environment::to_json(){
+        std::string output;
+        std::string system_json;
+
+        output.append("[");
+
+        for(int i = 0; i < this->size; i++){
+            output.append("{");
+            
+            output.append("\"ip\":\"");
+            output.append(this->keys.at(i));
+            output.append("\"");
+            output.append(",");
+            
+            system_json = this->systems.at(i)->to_json();
+            output.append("\"size\":");
+            output.append(std::to_string(system_json.length()));
+            output.append("");
+            output.append(",");
+            
+            output.append("\"system\":");
+            output.append(system_json);
+            output.append("");
+
+            output.append("}");
+            if(i < this->size - 1){
+                output.append(",");
+            }
+        }
+
+        output.append("]");
+
+        return output;
+    }
+
+    void Environment::from_json(std::string data){
+
+    }
 }

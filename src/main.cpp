@@ -262,10 +262,11 @@ int test2(int argc, char** argv){
                 // buffer_string2.assign(buffer_string);
                 // sys2.from_json(buffer_string2);
 
-                env.get_system_by_key("local")->display_system_info();
-                std::cout << "==================" << std::endl;
-                env.get_system_by_key("other")->display_system_info();
+                // env.get_system_by_key("local")->display_system_info();
+                // std::cout << "==================" << std::endl;
+                // env.get_system_by_key("other")->display_system_info();
                 std::cout << "++++++++++++++++++" << std::endl;
+                std::cout << env.to_json() << std::endl;
             }
 
             // #ifdef _WIN64

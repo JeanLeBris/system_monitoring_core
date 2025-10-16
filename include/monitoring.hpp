@@ -229,6 +229,18 @@ namespace monitoring{
         std::vector<std::string> get_keys();
 
         System* get_system_by_key(std::string key);
+
+
+
+        /**
+         * Get a json string from the system's data
+         */
+        std::string to_json();
+
+        /**
+         * Get the system's data from a json string
+         */
+        void from_json(std::string data);
     };
 }
 
