@@ -7,7 +7,7 @@
 namespace server{
     SOCKET CreateSocket(){
         SOCKET fdsocket;
-        if((fdsocket = socket(AF_INET, SOCK_DGRAM, 0)) == -1){
+        if((fdsocket = socket(AF_INET, SOCK_DGRAM, 0)) == INVALID_SOCKET){
             printf("socket creation failure: %s\n", strerror(WSAGetLastError()));
             exit(EXIT_FAILURE);
         }

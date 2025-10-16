@@ -244,7 +244,7 @@ namespace monitoring{
         std::string buffer_string = data;
         int buffer_int = 0;
         int size_buffer = 0;
-        std::chrono::system_clock::time_point zero_point = std::chrono::system_clock::time_point(std::chrono::nanoseconds(0));
+        // std::chrono::system_clock::time_point zero_point = std::chrono::system_clock::time_point(std::chrono::nanoseconds(0));
 
         // std::cout << std::to_string(this->logical_disk.size) << ":" << std::to_string(this->physical_disk.size) << std::endl;
 
@@ -408,7 +408,7 @@ namespace monitoring{
     std::vector<uint8_t> System::to_bytes(){
         std::vector<uint8_t> output;
         uint64_t size = 0;
-        uint8_t *a_size = (uint8_t*) &size;
+        // uint8_t *a_size = (uint8_t*) &size;
         // uint64_t size2 = 0;
 
         size = sizeof(*this);
@@ -459,7 +459,7 @@ namespace monitoring{
     }
     
     void System::from_bytes(std::vector<uint8_t> data){
-        for(int i = 0; i < data.size(); i++){
+        for(unsigned long long i = 0; i < data.size(); i++){
             std::cout << "/" << (int) data.at(i);
         }
         std::cout << std::endl;
@@ -564,7 +564,7 @@ namespace monitoring{
     void Environment::from_json(std::string data, char* source_ip){
         std::string buffer_string = data;
         int buffer_int = 0;
-        int size_buffer = 0;
+        // int size_buffer = 0;
 
         int amount_of_systems = 0;
         std::string buffer_ip;

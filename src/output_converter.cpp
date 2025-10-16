@@ -91,11 +91,11 @@ namespace converter{
         // }
         // printf("\n");
 
-        int cr_int = data.find("\r");
+        unsigned long long cr_int = data.find("\r");
         cr_int = (cr_int == data.npos) ? data.length() : cr_int;
-        int lf_int = data.find("\n");
+        unsigned long long lf_int = data.find("\n");
         lf_int = (lf_int == data.npos) ? data.length() : lf_int;
-        int buffer_int = (cr_int < lf_int) ? cr_int : lf_int;
+        unsigned long long buffer_int = (cr_int < lf_int) ? cr_int : lf_int;
         // printf("%d\n", buffer_int);
 
         strcpy(output.data[0].keys[0], "hostname");
