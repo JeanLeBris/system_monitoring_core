@@ -175,11 +175,6 @@ namespace monitoring{
         /**
          * Update the system's info
          */
-        void initial_info();
-
-        /**
-         * Update the system's info
-         */
         void basic_update_info();
 
         /**
@@ -217,6 +212,23 @@ namespace monitoring{
          * Get the system's data from a byte array
          */
         void from_bytes(std::vector<uint8_t> data);
+    };
+
+    class Environment{
+        private:
+        int size;
+        std::vector<std::string> keys;
+        std::vector<System*> systems;
+
+        public:
+        Environment();
+        ~Environment();
+
+        void push(std::string key, System* system);
+
+        std::vector<std::string> get_keys();
+
+        System* get_system_by_key(std::string key);
     };
 }
 

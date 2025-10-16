@@ -464,4 +464,35 @@ namespace monitoring{
         }
         std::cout << std::endl;
     }
+
+    Environment::Environment(){
+        this->size = 0;
+        this->push("local", new System());
+        this->get_system_by_key("local")->basic_update_info();
+    }
+
+    Environment::~Environment(){
+        for(int i = 0; i < this->size; i++){
+            delete this->systems.at(i);
+        }
+    }
+
+    void Environment::push(std::string key, System* system){
+        this->size++;
+        this->keys.push_back(key);
+        this->systems.push_back(system);
+    }
+
+    std::vector<std::string> Environment::get_keys(){
+        return this->keys;
+    }
+
+    System* Environment::get_system_by_key(std::string key){
+        for(int i = 0; i < this->size; i++){
+            if(key == this->keys.at(i)){
+                return this->systems.at(i);
+            }
+        }
+        return NULL;
+    }
 }

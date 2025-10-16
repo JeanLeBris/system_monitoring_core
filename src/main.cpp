@@ -149,19 +149,21 @@ void *slave_connection_thread(void *_args){
 int test2(int argc, char** argv){
     if(argc == 2){
         if(strcmp(argv[1], "slave") == 0){
-            monitoring::System sys =  monitoring::System();
-            sys.basic_update_info();
-            // monitoring::System *sys = new monitoring::System;
-            // sys.update_info();
-            // sys.display_system_info();
+            // monitoring::System sys =  monitoring::System();
+            // sys.basic_update_info();
+            // // monitoring::System *sys = new monitoring::System;
+            // // sys.update_info();
+            // // sys.display_system_info();
+
+            monitoring::Environment env = monitoring::Environment();
 
             // thread_args *args = (thread_args*) malloc(sizeof(thread_args));
             pthread_t sniffer_thread_1, sniffer_thread_2;
-            if(pthread_create(&sniffer_thread_1, NULL, sys_updater, (void*) &sys) < 0){
+            if(pthread_create(&sniffer_thread_1, NULL, sys_updater, (void*) env.get_system_by_key("local")) < 0){
                 perror("could not create thread");
                 return 1;
             }
-            if(pthread_create(&sniffer_thread_2, NULL, slave_connection_thread, (void*) &sys) < 0){
+            if(pthread_create(&sniffer_thread_2, NULL, slave_connection_thread, (void*) env.get_system_by_key("local")) < 0){
                 perror("could not create thread");
                 return 1;
             }
@@ -207,18 +209,21 @@ int test2(int argc, char** argv){
             #endif
         }
         else if(strcmp(argv[1], "master") == 0){
-            monitoring::System sys = monitoring::System();
-            sys.basic_update_info();
-            // monitoring::System *sys2 = new monitoring::System;
-            monitoring::System sys2 = monitoring::System();
-            // sys2->basic_update_info();
+            // monitoring::System sys = monitoring::System();
+            // sys.basic_update_info();
+            // // monitoring::System *sys2 = new monitoring::System;
+            // monitoring::System sys2 = monitoring::System();
+            // // sys2->basic_update_info();
+
+            monitoring::Environment env = monitoring::Environment();
+            env.push("other", new monitoring::System());
 
             pthread_t sniffer_thread_1, sniffer_thread_2;
-            if(pthread_create(&sniffer_thread_1, NULL, sys_updater, (void*) &sys) < 0){
+            if(pthread_create(&sniffer_thread_1, NULL, sys_updater, (void*) env.get_system_by_key("local")) < 0){
                 perror("could not create thread");
                 return 1;
             }
-            if(pthread_create(&sniffer_thread_2, NULL, master_connection_thread, (void*) &sys2) < 0){
+            if(pthread_create(&sniffer_thread_2, NULL, master_connection_thread, (void*) env.get_system_by_key("other")) < 0){
                 perror("could not create thread");
                 return 1;
             }
@@ -257,9 +262,9 @@ int test2(int argc, char** argv){
                 // buffer_string2.assign(buffer_string);
                 // sys2.from_json(buffer_string2);
 
-                sys.display_system_info();
+                env.get_system_by_key("local")->display_system_info();
                 std::cout << "==================" << std::endl;
-                sys2.display_system_info();
+                env.get_system_by_key("other")->display_system_info();
                 std::cout << "++++++++++++++++++" << std::endl;
             }
 
