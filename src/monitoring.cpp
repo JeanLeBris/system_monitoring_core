@@ -295,7 +295,7 @@ namespace monitoring{
         buffer_int = buffer_string.find(":");
         buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
         buffer_int = buffer_string.find("}");
-        this->cpu.cpu_load_percentage = std::stoi(buffer_string.substr(0, buffer_int));
+        this->cpu.cpu_load_percentage = get_stoi(buffer_string.substr(0, buffer_int));
         buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
         
         buffer_int = buffer_string.find(":");
@@ -318,7 +318,7 @@ namespace monitoring{
         buffer_int = buffer_string.find(":");
         buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
         buffer_int = buffer_string.find(",");
-        this->logical_disk.size = std::stoi(buffer_string.substr(0, buffer_int));
+        this->logical_disk.size = get_stoi(buffer_string.substr(0, buffer_int));
         buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
 
         if(size_buffer == 0){
@@ -385,7 +385,7 @@ namespace monitoring{
         buffer_int = buffer_string.find(":");
         buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
         buffer_int = buffer_string.find(",");
-        this->physical_disk.size = std::stoi(buffer_string.substr(0, buffer_int));
+        this->physical_disk.size = get_stoi(buffer_string.substr(0, buffer_int));
         buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
 
         if(size_buffer == 0){
@@ -591,11 +591,11 @@ namespace monitoring{
         int amount_of_systems = 0;
         std::string buffer_ip;
         int system_size = 0;
-        
+
         buffer_int = buffer_string.find(":");
         buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
         buffer_int = buffer_string.find(",");
-        amount_of_systems = std::stoi(buffer_string.substr(0, buffer_int));
+        amount_of_systems = get_stoi(buffer_string.substr(0, buffer_int));
         buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
 
         buffer_int = buffer_string.find("[");
@@ -617,7 +617,7 @@ namespace monitoring{
             buffer_int = buffer_string.find(":");
             buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
             buffer_int = buffer_string.find(",");
-            system_size = std::stoi(buffer_string.substr(0, buffer_int));
+            system_size = get_stoi(buffer_string.substr(0, buffer_int));
             buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
 
             buffer_int = buffer_string.find(":");
@@ -629,5 +629,9 @@ namespace monitoring{
             buffer_int = buffer_string.find("}");
             buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
         }
+    }
+
+    void Environment::from_json(std::string data, std::string source_ip){
+        this->from_json(data, source_ip.c_str());
     }
 }
