@@ -45,6 +45,17 @@ namespace server{
         return sin;
     }
 
+    SOCKADDR_IN CreateServerSinForUnicast(std::string ip_address, uint16_t port){
+        SOCKADDR_IN sin;
+        // sin.sin_addr.s_addr = INADDR_ANY;   // inet_addr(SIN_ADDR);
+        sin.sin_addr.s_addr = inet_addr(ip_address.c_str());
+        // sin.sin_addr.s_addr = inet_addr("255.255.255.255");
+        // sin.sin_addr.s_addr = htonl(INADDR_BROADCAST);
+        sin.sin_family = AF_INET;
+        sin.sin_port = htons(port);
+        return sin;
+    }
+
     SOCKADDR_IN CreateServerSinForNormalcast(uint16_t port){
         SOCKADDR_IN sin;
         sin.sin_addr.s_addr = INADDR_ANY;   // inet_addr(SIN_ADDR);

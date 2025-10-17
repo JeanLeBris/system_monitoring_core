@@ -17,7 +17,7 @@
 #define SOCKADDR sockaddr
 #endif
 
-#define APP_PORT 4148
+// #define APP_PORT 4148
 #define SLAVE_PORT 4149
 // #define BROADCAST_ADDRESS "192.168.1.255"
 
@@ -45,6 +45,11 @@ namespace server{
     /**
      * Filling server information
      */
+    SOCKADDR_IN CreateServerSinForUnicast(std::string ip_address, uint16_t port);
+
+    /**
+     * Filling server information
+     */
     SOCKADDR_IN CreateServerSinForNormalcast(uint16_t port);
 
     /**
@@ -55,17 +60,17 @@ namespace server{
     /**
      * Set up a master socket
      */
-    connection SetUpMasterConnection();
+    connection SetUpBroadcastMasterConnection();
+
+    /**
+     * Set up a master socket
+     */
+    connection SetUpUnicastMasterConnection(std::string ip_address);
 
     /**
      * Set up a slave socket
      */
     connection SetUpSlaveConnection();
-
-    /**
-     * Set up a app socket
-     */
-    connection SetUpAppConnection();
 }
 
 #endif
