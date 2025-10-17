@@ -60,54 +60,6 @@ void *sys_updater(void *_args){
     pthread_exit(NULL);
 }
 
-void *master_connection_thread_sys_level(void *_args){
-    // thread_args *args = (thread_args*) _args;
-    // monitoring::System *sys = args->sys;
-    monitoring::System *sys = (monitoring::System*) _args;
-    std::chrono::duration<double, std::milli> duration;
-    std::chrono::system_clock::time_point time;
-    
-    #ifdef _WIN64
-    WSADATA WSAData;
-    WSAStartup(MAKEWORD(2, 0), &WSAData);
-    #endif
-
-    server::connection conn = server::SetUpBroadcastMasterConnection();
-
-    socklen_t len = sizeof(conn.dest_addr);
-    int n = 0;
-    char buffer_string[10000] = "\0";
-    std::string buffer_string2;
-
-    time = std::chrono::system_clock::now();
-    while(1){
-        // std::this_thread::sleep_for(std::chrono::milliseconds{500});
-        duration = std::chrono::system_clock::now() - time;
-        while(duration.count() < 500){
-            std::this_thread::sleep_for(std::chrono::milliseconds{100});
-            duration = std::chrono::system_clock::now() - time;
-        }
-        time = std::chrono::system_clock::now();
-        // printf("ping\n");
-        
-        // sys->update_info();
-
-        sendto(conn.sockfd, (const char *)"get info", strlen("get info"), 0, (const struct sockaddr *) &(conn.dest_addr), len);
-        n = recvfrom(conn.sockfd, (char *)buffer_string, 10000, 0, ( struct sockaddr *) &(conn.dest_addr), &len);
-        // std::cout << inet_ntoa(conn.dest_addr.sin_addr) << std::endl;
-        buffer_string[n] = '\0';
-        buffer_string2.assign(buffer_string);
-        sys->from_json(buffer_string2);
-    }
-    // free(args);
-
-    #ifdef _WIN64
-    WSACleanup();
-    #endif
-    
-    pthread_exit(NULL);
-}
-
 void *master_connection_thread_env_level(void *_args){
     // thread_args *args = (thread_args*) _args;
     // monitoring::System *sys = args->sys;
@@ -175,50 +127,6 @@ void *master_connection_thread_env_level(void *_args){
     pthread_exit(NULL);
 }
 
-void *slave_connection_thread_sys_level(void *_args){
-    // thread_args *args = (thread_args*) _args;
-    // monitoring::System *sys = args->sys;
-    monitoring::System *sys = (monitoring::System*) _args;
-    std::chrono::duration<double, std::milli> duration;
-    std::chrono::system_clock::time_point time;
-    
-    #ifdef _WIN64
-    WSADATA WSAData;
-    WSAStartup(MAKEWORD(2, 0), &WSAData);
-    #endif
-
-    server::connection conn = server::SetUpSlaveConnection();
-
-    // SOCKADDR_IN cliaddr;
-    socklen_t len = sizeof(conn.dest_addr);
-    int n = 0;
-    char buffer_string[10000] = "\0";
-
-    time = std::chrono::system_clock::now();
-    while(1){
-        // std::this_thread::sleep_for(std::chrono::milliseconds{500});
-        duration = std::chrono::system_clock::now() - time;
-        while(duration.count() < 500){
-            std::this_thread::sleep_for(std::chrono::milliseconds{100});
-            duration = std::chrono::system_clock::now() - time;
-        }
-        time = std::chrono::system_clock::now();
-        // printf("ping\n");
-        
-        // sys->update_info();
-
-        n = recvfrom(conn.sockfd, (char *)buffer_string, 1024, 0, ( struct sockaddr *) &(conn.dest_addr), &len);
-        sendto(conn.sockfd, (const char *) sys->to_json().c_str(), strlen(sys->to_json().c_str()), 0, (const struct sockaddr *) &(conn.dest_addr), len);
-    }
-    // free(args);
-
-    #ifdef _WIN64
-    WSACleanup();
-    #endif
-    
-    pthread_exit(NULL);
-}
-
 void *slave_connection_thread_env_level(void *_args){
     // thread_args *args = (thread_args*) _args;
     // monitoring::System *sys = args->sys;
@@ -251,8 +159,131 @@ void *slave_connection_thread_env_level(void *_args){
         
         // sys->update_info();
 
-        n = recvfrom(conn.sockfd, (char *)buffer_string, 1024, 0, ( struct sockaddr *) &(conn.dest_addr), &len);
+        n = recvfrom(conn.sockfd, (char *)buffer_string, 9999, 0, ( struct sockaddr *) &(conn.dest_addr), &len);
+        if(n > 0){
+            printf("%s\n", buffer_string);
+        }
         sendto(conn.sockfd, (const char *) env->to_json().c_str(), strlen(env->to_json().c_str()), 0, (const struct sockaddr *) &(conn.dest_addr), len);
+    }
+    // free(args);
+
+    #ifdef _WIN64
+    WSACleanup();
+    #endif
+    
+    pthread_exit(NULL);
+}
+
+// void *app_connection_thread_env_level(void *_args){
+//     // thread_args *args = (thread_args*) _args;
+//     // monitoring::System *sys = args->sys;
+//     monitoring::Environment *env = (monitoring::Environment*) _args;
+//     std::chrono::duration<double, std::milli> duration;
+//     std::chrono::system_clock::time_point time;
+    
+//     #ifdef _WIN64
+//     WSADATA WSAData;
+//     WSAStartup(MAKEWORD(2, 0), &WSAData);
+//     #endif
+
+//     server::connection conn = server::SetUpAppConnection();
+
+//     // SOCKADDR_IN cliaddr;
+//     socklen_t len = sizeof(conn.dest_addr);
+//     int n = 0;
+//     char buffer_string[10000] = "\0";
+
+//     time = std::chrono::system_clock::now();
+//     while(1){
+//         // std::this_thread::sleep_for(std::chrono::milliseconds{500});
+//         duration = std::chrono::system_clock::now() - time;
+//         while(duration.count() < 500){
+//             std::this_thread::sleep_for(std::chrono::milliseconds{100});
+//             duration = std::chrono::system_clock::now() - time;
+//         }
+//         time = std::chrono::system_clock::now();
+//         // printf("ping\n");
+        
+//         // sys->update_info();
+
+//         n = recvfrom(conn.sockfd, (char *)buffer_string, 9999, 0, ( struct sockaddr *) &(conn.dest_addr), &len);
+//         if(n > 0){
+//             printf("%s\n", buffer_string);
+//         }
+//         sendto(conn.sockfd, (const char *) env->to_json().c_str(), strlen(env->to_json().c_str()), 0, (const struct sockaddr *) &(conn.dest_addr), len);
+//     }
+//     // free(args);
+
+//     #ifdef _WIN64
+//     WSACleanup();
+//     #endif
+    
+//     pthread_exit(NULL);
+// }
+
+void *app_test(void *_args){
+    // thread_args *args = (thread_args*) _args;
+    // monitoring::System *sys = args->sys;
+    monitoring::Environment *env = (monitoring::Environment*) _args;
+    std::chrono::duration<double, std::milli> duration;
+    std::chrono::system_clock::time_point time;
+    
+    #ifdef _WIN64
+    WSADATA WSAData;
+    WSAStartup(MAKEWORD(2, 0), &WSAData);
+    #endif
+
+    // create a socket linked to a specific transport service provider
+    SOCKET fdsocket = socket(AF_INET, SOCK_STREAM, 0);
+    if(fdsocket == -1){
+        printf("socket creation failure: %s\n", strerror(WSAGetLastError()));
+        exit(EXIT_FAILURE);
+    }
+
+    // Specify a transport address and a port for the server
+    SOCKADDR_IN sin;
+    sin.sin_addr.s_addr = INADDR_ANY;   // inet_addr(SIN_ADDR);
+    sin.sin_family = AF_INET;
+    sin.sin_port = htons(4148);
+
+    // Associates a local address with a socket
+    if(bind(fdsocket, (SOCKADDR *) &sin, sizeof(sin)) != 0){
+        printf("binding failure: %s\n", strerror(WSAGetLastError()));
+        exit(EXIT_FAILURE);
+    }
+
+    // change socket state to listening
+    if(listen(fdsocket, 3) != 0){
+        printf("listening failure: %s\n", strerror(WSAGetLastError()));
+        exit(EXIT_FAILURE);
+    }
+
+    SOCKADDR_IN clientAdress;
+    SOCKET clientSocket;
+
+    int addrlen = sizeof(clientAdress);
+    char buffer_string[10000] = "\0";
+    std::string prefix = "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nAccess-Control-Allow-Origin: *\r\nContent-Length: ";
+    // "%zu\r\n\r\n";
+    std::string content;
+
+    time = std::chrono::system_clock::now();
+    while(1){
+        clientSocket = accept(fdsocket, (SOCKADDR *) &clientAdress, &addrlen);
+        if(clientSocket != -1){
+            char ip[16];
+            inet_ntop(AF_INET, &(clientAdress.sin_addr), ip, 16);
+            // printf("connexion: %s:%i\n", ip, clientAdress->sin_port);
+        }
+
+        // std::cout << env->to_json() << std::endl;
+        recv(clientSocket, buffer_string, 9999, 0);
+        // std::this_thread::sleep_for(std::chrono::milliseconds{1000});
+        // std::cout << env->to_json() << std::endl;
+        content = env->to_json();
+        send(clientSocket, (prefix + std::to_string(content.length()) + "\r\n\r\n" + content).c_str(), (prefix + std::to_string(content.length()) + "\r\n\r\n" + content).length(), 0);
+
+        closesocket(clientSocket);
     }
     // free(args);
 
@@ -297,7 +328,7 @@ int test2(int argc, char** argv){
         env.push(ip_addresses.at(i), new monitoring::System());
     }
 
-    pthread_t sniffer_thread_1, sniffer_thread_3;
+    pthread_t sniffer_thread_1, sniffer_thread_2, sniffer_thread_3;
     std::vector<pthread_t*> master_threads;
     std::vector<thread_args*> master_thread_args;
     bool access_open = true;
@@ -316,7 +347,11 @@ int test2(int argc, char** argv){
             return 1;
         }
     }
-    if(pthread_create(&sniffer_thread_3, NULL, slave_connection_thread_env_level, (void*) &env) < 0){
+    if(pthread_create(&sniffer_thread_2, NULL, slave_connection_thread_env_level, (void*) &env) < 0){
+        perror("could not create thread");
+        return 1;
+    }
+    if(pthread_create(&sniffer_thread_3, NULL, app_test, (void*) &env) < 0){
         perror("could not create thread");
         return 1;
     }

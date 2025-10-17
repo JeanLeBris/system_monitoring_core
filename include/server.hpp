@@ -17,7 +17,7 @@
 #define SOCKADDR sockaddr
 #endif
 
-// #define APP_PORT 4148
+#define APP_PORT 4148
 #define SLAVE_PORT 4149
 // #define BROADCAST_ADDRESS "192.168.1.255"
 
@@ -62,6 +62,10 @@ namespace server{
      */
     void BindingSocket(SOCKET *fdsocket, SOCKADDR_IN *sin);
 
+    // void ListenSocket(SOCKET *fdsocket);
+
+    // SOCKET AcceptClientSocket(SOCKET *fdsocket, SOCKADDR_IN *clientAdress);
+
     /**
      * Set up a master socket
      */
@@ -76,6 +80,11 @@ namespace server{
      * Set up a slave socket
      */
     connection SetUpSlaveConnection();
+
+    // /**
+    //  * Set up a app socket
+    //  */
+    // connection SetUpAppConnection();
 }
 
 #endif

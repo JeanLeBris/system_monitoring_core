@@ -86,4 +86,22 @@ namespace server{
             exit(EXIT_FAILURE);
         }
     }
+
+    // void ListenSocket(SOCKET *fdsocket){
+    //     if(listen(*fdsocket, 3) != 0){
+    //         printf("listening failure: %s\n", strerror(WSAGetLastError()));
+    //         exit(EXIT_FAILURE);
+    //     }
+    // }
+
+    // SOCKET AcceptClientSocket(SOCKET *fdsocket, SOCKADDR_IN *clientAdress){
+    //     int clientSocket;
+    //     int addrlen = sizeof(*clientAdress);
+    //     if((clientSocket = accept(*fdsocket, (SOCKADDR *) clientAdress, &addrlen)) != -1){
+    //         char ip[16];
+    //         inet_ntop(AF_INET, &(clientAdress->sin_addr), ip, 16);
+    //         // printf("connexion: %s:%i\n", ip, clientAdress->sin_port);
+    //     }
+    //     return clientSocket;
+    // }
 }

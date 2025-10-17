@@ -38,4 +38,18 @@ namespace server{
 
         return output;
     }
+
+    // connection SetUpAppConnection(){
+    //     connection output;
+    //     SOCKADDR_IN servaddr;
+
+    //     output.sockfd = server::CreateSocket();
+    //     servaddr = server::CreateServerSinForNormalcast(APP_PORT);
+    //     servaddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    //     server::BindingSocket(&(output.sockfd), &servaddr);
+
+    //     // SOCKADDR_IN cliaddr;
+
+    //     return output;
+    // }
 }
