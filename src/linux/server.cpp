@@ -23,13 +23,27 @@ namespace server{
         return fdsocket;
     }
 
-    SOCKET SetSocketOptions(SOCKET sock){
+    SOCKET SetSocketBroadcastOptions(SOCKET sock){
         int broadcast = 1;
 
         if(setsockopt(sock,SOL_SOCKET,SO_BROADCAST,&broadcast,sizeof(broadcast)) < 0){
             std::cout << "Error in setting Broadcast option";
             close(sock);
             return 0;
+        }
+
+        return sock;
+    }
+
+    SOCKET SetSocketTimeoutOptions(SOCKET sock){
+        timeval timeout;
+
+        // timeout.tv_sec = 3;   // seconds
+        timeout.tv_usec = 10000;  // microseconds
+        if (setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout)) < 0) {
+            perror("setsockopt failed");
+            close(sock);
+            exit(EXIT_FAILURE);
         }
 
         return sock;

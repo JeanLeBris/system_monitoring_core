@@ -35,7 +35,12 @@ namespace server{
     /**
      * Set socket options to broadcast
      */
-    SOCKET SetSocketOptions(SOCKET sock);
+    SOCKET SetSocketBroadcastOptions(SOCKET sock);
+
+    /**
+     * Set socket options to timeout
+     */
+    SOCKET SetSocketTimeoutOptions(SOCKET sock);
 
     /**
      * Filling server information

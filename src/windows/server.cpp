@@ -15,13 +15,30 @@ namespace server{
         return fdsocket;
     }
 
-    SOCKET SetSocketOptions(SOCKET sock){
+    SOCKET SetSocketBroadcastOptions(SOCKET sock){
         char broadcast = 1;
 
         if(setsockopt(sock,SOL_SOCKET,SO_BROADCAST,&broadcast,sizeof(broadcast)) < 0){
             std::cout << "Error in setting Broadcast option";
             closesocket(sock);
             return 0;
+        }
+
+        return sock;
+    }
+
+    SOCKET SetSocketTimeoutOptions(SOCKET sock){
+        DWORD timeout = 10;
+
+        if (setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, (const char *) &timeout, sizeof(timeout)) < 0) {
+            perror("setsockopt failed");
+            #ifdef _WIN64
+            closesocket(sock);
+            #endif
+            #ifdef __linux
+            close(sock);
+            #endif
+            exit(EXIT_FAILURE);
         }
 
         return sock;

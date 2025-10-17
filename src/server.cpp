@@ -5,7 +5,7 @@ namespace server{
         connection output;
 
         output.sockfd = server::CreateSocket();
-        output.sockfd = server::SetSocketOptions(output.sockfd);
+        output.sockfd = server::SetSocketBroadcastOptions(output.sockfd);
         output.dest_addr = server::CreateServerSinForBroadcast(SLAVE_PORT);
 
         return output;
@@ -15,6 +15,7 @@ namespace server{
         connection output;
 
         output.sockfd = server::CreateSocket();
+        output.sockfd = server::SetSocketTimeoutOptions(output.sockfd);
         output.dest_addr = server::CreateServerSinForUnicast(ip_address, SLAVE_PORT);
         // if (inet_pton(AF_INET, ip_address.c_str(), &output.dest_addr.sin_addr) <= 0) {
         //     perror("Invalid address / Address not supported");
