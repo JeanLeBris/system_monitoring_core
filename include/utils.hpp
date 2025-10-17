@@ -9,6 +9,8 @@ std::string exec(std::string cmd);
 int get_const_str_length(const char* input);
 long long get_stoll(std::string value, long long replacement);
 long long get_stoll(std::string value);
+long long get_stoi(std::string value, int replacement);
+long long get_stoi(std::string value);
 std::vector<std::string> get_ip_addresses(std::string path);
 
 #endif

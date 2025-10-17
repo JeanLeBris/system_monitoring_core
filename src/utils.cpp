@@ -62,6 +62,19 @@ long long get_stoll(std::string value){
     return get_stoll(value, 0);
 }
 
+long long get_stoi(std::string value, int replacement){
+    if(value.length() > 0){
+        return std::stoi(value);
+    }
+    else{
+        return replacement;
+    }
+}
+
+long long get_stoi(std::string value){
+    return get_stoi(value, 0);
+}
+
 std::vector<std::string> get_ip_addresses(std::string path){
     std::vector<std::string> output;
 
