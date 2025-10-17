@@ -73,6 +73,11 @@ namespace monitoring{
         ~System();
 
         /**
+         * Set the accessed value
+         */
+        void set_accessed(bool value);
+
+        /**
          * Get the accessed value
          */
         bool get_accessed();

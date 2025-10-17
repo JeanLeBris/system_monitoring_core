@@ -18,6 +18,10 @@ namespace monitoring{
         delete[] this->physical_disk.data;
     }
 
+    void System::set_accessed(bool value){
+        this->accessed = value;
+    }
+
     bool System::get_accessed(){
         return this->accessed;
     }
