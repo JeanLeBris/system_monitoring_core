@@ -94,27 +94,31 @@ namespace monitoring{
     void System::display_system_info(){
         std::chrono::duration<double> duration;
 
-        // std::cout << ;
-        std::cout << "Hostname" << std::endl;
-        std::cout << "\t" << this->get_hostname() << std::endl;
-        std::cout << "CPU info" << std::endl;
-        std::cout << "\t" << this->get_cpu_load_percentage() << "%" << std::endl;
-        std::cout << "RAM info" << std::endl;
-        std::cout << "\t" << this->get_ram_load_percentage() << "%" << std::endl;
-        std::cout << "logical disk info" << std::endl;
-        for(int i = 0; i < this->get_logical_disk_info().size; i++){
-            duration = (this->get_logical_disk_info().data[i].time - this->get_logical_disk_info().data[i].last_time);
-            std::cout << "\t" << this->get_logical_disk_info().data[i].id;
-            std::cout << this->get_logical_disk_info().data[i].volume_name;
-            std::cout << "\t" << this->get_logical_disk_info().data[i].total_space / std::pow(1024, 2) << "GB";
-            std::cout << "\t" << this->get_logical_disk_info().data[i].free_space / std::pow(1024, 2) << "GB";
-            // std::cout << "\t" << duration.count();
-            std::cout << "\t" << (unsigned long long) (std::abs(this->get_logical_disk_info().data[i].free_space - this->get_logical_disk_info().data[i].last_free_space) / duration.count()) << "kB/s" << std::endl;
+        if(this->accessed){
+            std::cout << "Hostname" << std::endl;
+            std::cout << "\t" << this->get_hostname() << std::endl;
+            std::cout << "CPU info" << std::endl;
+            std::cout << "\t" << this->get_cpu_load_percentage() << "%" << std::endl;
+            std::cout << "RAM info" << std::endl;
+            std::cout << "\t" << this->get_ram_load_percentage() << "%" << std::endl;
+            std::cout << "logical disk info" << std::endl;
+            for(int i = 0; i < this->get_logical_disk_info().size; i++){
+                duration = (this->get_logical_disk_info().data[i].time - this->get_logical_disk_info().data[i].last_time);
+                std::cout << "\t" << this->get_logical_disk_info().data[i].id;
+                std::cout << this->get_logical_disk_info().data[i].volume_name;
+                std::cout << "\t" << this->get_logical_disk_info().data[i].total_space / std::pow(1024, 2) << "GB";
+                std::cout << "\t" << this->get_logical_disk_info().data[i].free_space / std::pow(1024, 2) << "GB";
+                // std::cout << "\t" << duration.count();
+                std::cout << "\t" << (unsigned long long) (std::abs(this->get_logical_disk_info().data[i].free_space - this->get_logical_disk_info().data[i].last_free_space) / duration.count()) << "kB/s" << std::endl;
+            }
+            std::cout << "physical disk info" << std::endl;
+            for(int i = 0; i < this->get_physical_disk_info().size; i++){
+                std::cout << "\t" << this->get_physical_disk_info().data[i].caption;
+                std::cout << "\t" << this->get_physical_disk_info().data[i].total_space / std::pow(1024, 2) << "GB" << std::endl;
+            }
         }
-        std::cout << "physical disk info" << std::endl;
-        for(int i = 0; i < this->get_physical_disk_info().size; i++){
-            std::cout << "\t" << this->get_physical_disk_info().data[i].caption;
-            std::cout << "\t" << this->get_physical_disk_info().data[i].total_space / std::pow(1024, 2) << "GB" << std::endl;
+        else{
+            std::cout << "unaccessible" << std::endl;
         }
     }
 
@@ -123,6 +127,11 @@ namespace monitoring{
         // std::chrono::duration<double, std::chrono::milliseconds> duration;
 
         output.append("{");
+
+        output.append("\"accessed\":");
+        output.append(std::to_string(this->accessed));
+        output.append("");
+        output.append(",");
 
         output.append("\"last_time\":");
         output.append(std::to_string(std::chrono::duration_cast<std::chrono::nanoseconds>(this->last_time - this->initial_time).count()));
@@ -254,6 +263,12 @@ namespace monitoring{
         // std::chrono::system_clock::time_point zero_point = std::chrono::system_clock::time_point(std::chrono::nanoseconds(0));
 
         // std::cout << std::to_string(this->logical_disk.size) << ":" << std::to_string(this->physical_disk.size) << std::endl;
+
+        buffer_int = buffer_string.find(":");
+        buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+        buffer_int = buffer_string.find(",");
+        this->accessed = get_stoll(buffer_string.substr(0, buffer_int));
+        buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
 
         buffer_int = buffer_string.find(":");
         buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
