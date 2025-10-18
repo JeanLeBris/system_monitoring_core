@@ -264,7 +264,7 @@ void *app_test(void *_args){
     SOCKADDR_IN clientAdress;
     SOCKET clientSocket;
 
-    int addrlen = sizeof(clientAdress);
+    socklen_t addrlen = sizeof(clientAdress);
     char buffer_string[10000] = "\0";
     std::string prefix = "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nAccess-Control-Allow-Origin: *\r\nContent-Length: ";
     // "%zu\r\n\r\n";
@@ -286,7 +286,12 @@ void *app_test(void *_args){
         content = env->to_json();
         send(clientSocket, (prefix + std::to_string(content.length()) + "\r\n\r\n" + content).c_str(), (prefix + std::to_string(content.length()) + "\r\n\r\n" + content).length(), 0);
 
+        #ifdef _WIN64
         closesocket(clientSocket);
+        #endif
+        #ifdef __linux__
+        close(clientSocket);
+        #endif
     }
     // free(args);
 
