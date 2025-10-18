@@ -236,7 +236,8 @@ void *app_test(void *_args){
     // create a socket linked to a specific transport service provider
     SOCKET fdsocket = socket(AF_INET, SOCK_STREAM, 0);
     if(fdsocket == -1){
-        printf("socket creation failure: %s\n", strerror(WSAGetLastError()));
+        // printf("socket creation failure: %s\n", strerror(WSAGetLastError()));
+        printf("socket creation failure\n");
         exit(EXIT_FAILURE);
     }
 
@@ -248,13 +249,15 @@ void *app_test(void *_args){
 
     // Associates a local address with a socket
     if(bind(fdsocket, (SOCKADDR *) &sin, sizeof(sin)) != 0){
-        printf("binding failure: %s\n", strerror(WSAGetLastError()));
+        // printf("binding failure: %s\n", strerror(WSAGetLastError()));
+        printf("binding failure\n");
         exit(EXIT_FAILURE);
     }
 
     // change socket state to listening
     if(listen(fdsocket, 3) != 0){
-        printf("listening failure: %s\n", strerror(WSAGetLastError()));
+        // printf("listening failure: %s\n", strerror(WSAGetLastError()));
+        printf("listening failure\n");
         exit(EXIT_FAILURE);
     }
 
