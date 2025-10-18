@@ -8,6 +8,7 @@
 #include <chrono>
 #include <filesystem>
 #include <cstring>
+#include <unistd.h>
 
 #include "monitoring.hpp"
 #include "output_converter.hpp"
