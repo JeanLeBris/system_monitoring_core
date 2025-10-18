@@ -161,9 +161,9 @@ void *slave_connection_thread_env_level(void *_args){
         // sys->update_info();
 
         n = recvfrom(conn.sockfd, (char *)buffer_string, 9999, 0, ( struct sockaddr *) &(conn.dest_addr), &len);
-        if(n > 0){
-            printf("%s\n", buffer_string);
-        }
+        // if(n > 0){
+        //     // printf("%s\n", buffer_string);
+        // }
         sendto(conn.sockfd, (const char *) env->to_json().c_str(), strlen(env->to_json().c_str()), 0, (const struct sockaddr *) &(conn.dest_addr), len);
     }
     // free(args);
