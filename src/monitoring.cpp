@@ -382,6 +382,8 @@ namespace monitoring{
             this->logical_disk.data[i].free_space = get_stoll(buffer_string.substr(0, buffer_int));
             buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
         }
+        buffer_int = buffer_string.find("]");
+        buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
         
         size_buffer = this->physical_disk.size;
         buffer_int = buffer_string.find(":");
@@ -418,6 +420,8 @@ namespace monitoring{
             this->physical_disk.data[i].total_space = get_stoll(buffer_string.substr(0, buffer_int));
             buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
         }
+        buffer_int = buffer_string.find("]");
+        buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
 
         // std::cout << std::to_string(std::chrono::duration_cast<std::chrono::nanoseconds>(this->last_time - zero_point).count()) << std::endl;
         // std::cout << this->hostname << std::endl;
@@ -594,7 +598,7 @@ namespace monitoring{
 
         int amount_of_systems = 0;
         std::string buffer_ip;
-        int system_size = 0;
+        long long system_size = 0;
 
         buffer_int = buffer_string.find(":");
         buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
@@ -630,8 +634,8 @@ namespace monitoring{
             this->get_system_by_key(buffer_ip)->from_json(buffer_string.substr(0, system_size));
             buffer_string = buffer_string.substr(system_size+1, buffer_string.length());
             
-            buffer_int = buffer_string.find("}");
-            buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
+            // buffer_int = buffer_string.find("}");
+            // buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
         }
     }
 

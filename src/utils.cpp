@@ -62,7 +62,7 @@ long long get_stoll(std::string value){
     return get_stoll(value, 0);
 }
 
-long long get_stoi(std::string value, int replacement){
+int get_stoi(std::string value, int replacement){
     if(value.length() > 0){
         return std::stoi(value);
     }
@@ -71,7 +71,7 @@ long long get_stoi(std::string value, int replacement){
     }
 }
 
-long long get_stoi(std::string value){
+int get_stoi(std::string value){
     return get_stoi(value, 0);
 }
 
