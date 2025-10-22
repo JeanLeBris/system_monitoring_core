@@ -39,7 +39,7 @@ namespace server{
         timeval timeout;
 
         // timeout.tv_sec = 3;   // seconds
-        timeout.tv_usec = 10000;  // microseconds
+        timeout.tv_usec = 100000;  // microseconds
         if (setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout)) < 0) {
             perror("setsockopt failed");
             close(sock);

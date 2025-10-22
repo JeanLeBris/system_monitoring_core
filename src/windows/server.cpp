@@ -28,7 +28,7 @@ namespace server{
     }
 
     SOCKET SetSocketTimeoutOptions(SOCKET sock){
-        DWORD timeout = 10;
+        DWORD timeout = 100;
 
         if (setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, (const char *) &timeout, sizeof(timeout)) < 0) {
             perror("setsockopt failed");
