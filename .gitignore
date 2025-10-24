@@ -43,3 +43,4 @@
 .vscode
 *.json
 ip_addresses
+routing_table*
