@@ -308,7 +308,7 @@ namespace converter{
             pdisk_name = dir_entry1.path().filename().string();
 
             if(pdisk_name.find("loop") == pdisk_name.npos){
-                buffer_string = exec("cat " + dir_entry1.path().string() + "/size");
+                buffer_string = get_file_content(dir_entry1.path().string() + "/size");
                 buffer_int = buffer_string.find("\n");
                 buffer_string = buffer_string.substr(0, buffer_int);
             
@@ -329,7 +329,7 @@ namespace converter{
                     if(dir_entry2.path().filename().string().find(pdisk_name) != std::string::npos){
                         ldisk_name = dir_entry2.path().filename().string();
 
-                        buffer_string = exec("cat " + dir_entry2.path().string() + "/size");
+                        buffer_string = get_file_content(dir_entry2.path().string() + "/size");
                         buffer_int = buffer_string.find("\n");
                         buffer_string = buffer_string.substr(0, buffer_int);
                     
@@ -345,14 +345,14 @@ namespace converter{
                         strcpy(output.data[iterator].values[2], buffer_string.c_str());
 
                         // Modify this to get the free space in the disk
-                        buffer_string = exec("cat " + dir_entry2.path().string() + "/size");
+                        buffer_string = get_file_content(dir_entry2.path().string() + "/size");
                         buffer_int = buffer_string.find("\n");
                         buffer_string = buffer_string.substr(0, buffer_int);
                     
                         strcpy(output.data[iterator].keys[3], "free_space");
                         strcpy(output.data[iterator].values[3], buffer_string.c_str());
 
-                        buffer_string = exec("cat " + dir_entry2.path().string() + "/partition");
+                        buffer_string = get_file_content(dir_entry2.path().string() + "/partition");
                         buffer_int = buffer_string.find("\n");
                         buffer_string = buffer_string.substr(0, buffer_int);
 

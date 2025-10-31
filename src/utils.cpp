@@ -29,6 +29,25 @@ std::string exec(std::string cmd) {
     return result;
 }
 
+std::string get_file_content(std::string cmd){
+    std::array<char, 128> buffer;
+    std::string result;
+    FILE *file = fopen(cmd.c_str(), "r");
+    if (file == NULL) {
+        printf("Cannot open file %s\n", cmd.c_str());
+        exit(0);
+    }
+
+    while (!feof(file)) {
+        if (fgets(buffer.data(), 128, file) != nullptr)
+            result += buffer.data();
+    }
+
+    fclose(file);
+    
+    return result;
+}
+
 int get_const_str_length(const char* input){
     int count = 0;
 

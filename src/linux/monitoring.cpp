@@ -7,7 +7,7 @@
 
 namespace monitoring{
     void System::update_hostname(){
-        converter::organized_data_array converted_result = converter::linux_hostname_converter(exec("cat /etc/hostname"));
+        converter::organized_data_array converted_result = converter::linux_hostname_converter(get_file_content("/etc/hostname"));
 
         this->hostname = converter::get_value_from_key(converted_result.data[0], "hostname");
 
@@ -15,7 +15,7 @@ namespace monitoring{
     }
 
     void System::update_basic_cpu_load_percentage(){
-        converter::organized_data_array converted_result = converter::linux_stat_converter(exec("cat /proc/stat"));
+        converter::organized_data_array converted_result = converter::linux_stat_converter(get_file_content("/proc/stat"));
         std::chrono::system_clock::time_point req_time = std::chrono::system_clock::now();
         // char cpu_data_types[7][30] = {"user", "nice", "system", "idle", "iowait", "irq", "softirq"};
         long long user = get_stoll(converter::get_value_from_key(converted_result.data[0], "user"));
@@ -39,7 +39,7 @@ namespace monitoring{
     }
 
     void System::update_cpu_load_percentage(){
-        converter::organized_data_array converted_result = converter::linux_stat_converter(exec("cat /proc/stat"));
+        converter::organized_data_array converted_result = converter::linux_stat_converter(get_file_content("/proc/stat"));
         std::chrono::system_clock::time_point req_time = std::chrono::system_clock::now();
         // char cpu_data_types[7][30] = {"user", "nice", "system", "idle", "iowait", "irq", "softirq"};
         long long user = get_stoll(converter::get_value_from_key(converted_result.data[0], "user"));
@@ -63,13 +63,13 @@ namespace monitoring{
     }
 
     void System::update_total_ram(){
-        converter::organized_data_array converted_result = converter::linux_meminfo_converter(exec("cat /proc/meminfo"));
+        converter::organized_data_array converted_result = converter::linux_meminfo_converter(get_file_content("/proc/meminfo"));
         this->ram.total_ram = get_stoll(converter::get_value_from_key(converted_result.data[0], "MemTotal"));
         free(converted_result.data);
     }
 
     void System::update_free_ram(){
-        converter::organized_data_array converted_result = converter::linux_meminfo_converter(exec("cat /proc/meminfo"));
+        converter::organized_data_array converted_result = converter::linux_meminfo_converter(get_file_content("/proc/meminfo"));
         this->ram.free_ram = get_stoll(converter::get_value_from_key(converted_result.data[0], "MemFree"));
         free(converted_result.data);
     }
