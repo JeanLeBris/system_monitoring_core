@@ -134,26 +134,6 @@ namespace monitoring{
         free(converted_result.data);
     }
 
-    // logical_disk_array monitoring::System::get_basic_logical_disk_info(){
-    //     converter::organized_data_array converted_result = converter::wmic_converter(exec("wmic logicaldisk get /VALUE"));
-
-    //     logical_disk_array result = {.size = 0, .data= NULL};
-
-    //     result.size = converted_result.size;
-    //     // result.data = (logical_disk_type*) malloc(result.size * sizeof(logical_disk_type));
-    //     result.data = new logical_disk_type[result.size];
-    //     for(int i = 0; i < result.size; i++){
-    //         result.data[i].id = converter::get_value_from_key(converted_result.data[i], "DeviceID");
-    //         result.data[i].volume_name = converter::get_value_from_key(converted_result.data[i], "VolumeName");
-    //         result.data[i].total_space = get_stoll(converter::get_value_from_key(converted_result.data[i], "Size"));
-    //         result.data[i].free_space = get_stoll(converter::get_value_from_key(converted_result.data[i], "FreeSpace"));
-    //     }
-
-    //     free(converted_result.data);
-
-    //     return result;
-    // }
-
     void System::update_basic_physical_disk_info(){
         converter::organized_data_array converted_result = converter::linux_sys_block_converter();
 
