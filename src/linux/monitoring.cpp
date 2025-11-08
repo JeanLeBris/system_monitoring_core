@@ -33,7 +33,7 @@ namespace monitoring{
         this->cpu.cpu_idle = idle;
         this->cpu.last_cpu_activity = this->cpu.cpu_activity - 1;
         this->cpu.last_cpu_idle = this->cpu.cpu_idle - 1;
-        this->cpu.cpu_load_percentage = 0 * (this->cpu.cpu_activity - this->cpu.last_cpu_activity) / (this->cpu.cpu_idle - this->cpu.last_cpu_idle);
+        this->cpu.cpu_load_percentage = 100 * (this->cpu.cpu_activity - this->cpu.last_cpu_activity) / (this->cpu.cpu_activity - this->cpu.last_cpu_activity + this->cpu.cpu_idle - this->cpu.last_cpu_idle);
         // std::cout << converted_result.data[0].keys[6] << "\t" << converted_result.data[0].values[6] << std::endl;
         free(converted_result.data);
     }
@@ -57,7 +57,7 @@ namespace monitoring{
         this->cpu.last_cpu_idle = this->cpu.cpu_idle;
         this->cpu.cpu_activity = user + nice + system + iowait + irq + softirq;
         this->cpu.cpu_idle = idle;
-        this->cpu.cpu_load_percentage = 100 * (this->cpu.cpu_activity - this->cpu.last_cpu_activity) / (this->cpu.cpu_idle - this->cpu.last_cpu_idle);
+        this->cpu.cpu_load_percentage = 100 * (this->cpu.cpu_activity - this->cpu.last_cpu_activity) / (this->cpu.cpu_activity - this->cpu.last_cpu_activity + this->cpu.cpu_idle - this->cpu.last_cpu_idle);
         // std::cout << converted_result.data[0].keys[6] << "\t" << converted_result.data[0].values[6] << std::endl;
         free(converted_result.data);
     }
