@@ -638,8 +638,4 @@ namespace monitoring{
             // buffer_string = buffer_string.substr(buffer_int+1, buffer_string.length());
         }
     }
-
-    void Environment::from_json(std::string data, std::string source_ip){
-        this->from_json(data, source_ip.c_str());
-    }
 }

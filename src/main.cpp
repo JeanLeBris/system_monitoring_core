@@ -67,7 +67,6 @@ void *master_connection_thread_env_level(void *_args){
     thread_args *args = (thread_args*) _args;
     monitoring::Environment *env = args->env;
     std::string target_ip = args->target_ip;
-    bool *access_open = args->access_open;
     std::chrono::duration<double, std::milli> duration;
     std::chrono::system_clock::time_point time;
     
@@ -144,7 +143,6 @@ void *slave_connection_thread_env_level(void *_args){
 
     // SOCKADDR_IN cliaddr;
     socklen_t len = sizeof(conn.dest_addr);
-    int n = 0;
     char buffer_string[10000] = "\0";
 
     time = std::chrono::system_clock::now();
@@ -160,7 +158,7 @@ void *slave_connection_thread_env_level(void *_args){
         
         // sys->update_info();
 
-        n = recvfrom(conn.sockfd, (char *)buffer_string, 9999, 0, ( struct sockaddr *) &(conn.dest_addr), &len);
+        recvfrom(conn.sockfd, (char *)buffer_string, 9999, 0, ( struct sockaddr *) &(conn.dest_addr), &len);
         // if(n > 0){
         //     // printf("%s\n", buffer_string);
         // }
@@ -226,7 +224,6 @@ void *app_test(void *_args){
     // thread_args *args = (thread_args*) _args;
     // monitoring::System *sys = args->sys;
     monitoring::Environment *env = (monitoring::Environment*) _args;
-    std::chrono::duration<double, std::milli> duration;
     std::chrono::system_clock::time_point time;
     
     #ifdef _WIN64
@@ -316,7 +313,6 @@ int test2(int argc, char** argv){
                                            true,
                                            true);
     
-    const char* choices1[2] = {"slave", "master"};
     parser.add_argument("-ip --ip-addresses", "store", 1, NULL, "", "string", 0, NULL, false, "ip addresses file", NULL, NULL, 0);
 
     argparse::ParsedArguments* parsed_args = parser.parse_args(argc, argv);
@@ -333,7 +329,7 @@ int test2(int argc, char** argv){
     // std::cout << mode << " : " << ip_addresses.size() << std::endl;
 
     monitoring::Environment env = monitoring::Environment();
-    for(int i = 1; i < ip_addresses.size(); i++){
+    for(long unsigned int i = 1; i < ip_addresses.size(); i++){
         env.push(ip_addresses.at(i), new monitoring::System());
     }
 
@@ -345,7 +341,7 @@ int test2(int argc, char** argv){
         perror("could not create thread");
         return 1;
     }
-    for(int i = 1; i < ip_addresses.size(); i++){
+    for(long unsigned int i = 1; i < ip_addresses.size(); i++){
         master_threads.push_back(new pthread_t());
         master_thread_args.push_back(new thread_args);
         master_thread_args.at(master_thread_args.size()-1)->env = &env;
