@@ -186,6 +186,9 @@ namespace monitoring{
             output.append("{");
             output.append("\"id\":\"");
             output.append(this->logical_disk.data[i].id);
+            if(output.back() == '\\'){
+                output.append("\\");
+            }
             output.append("\"");
             output.append(",");
             output.append("\"volume_name\":\"");
