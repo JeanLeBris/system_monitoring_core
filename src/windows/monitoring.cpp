@@ -73,7 +73,7 @@ namespace monitoring{
         int counter = 0;
         char string_buffer[20] = "";
         for(int i = 0; i < ret; i++){
-            if(test[i] == NULL){
+            if(test[i] == 0){
                 counter++;
             }
         }
@@ -89,7 +89,7 @@ namespace monitoring{
         DWORD sectors_per_cluster, bytes_per_sector, number_of_free_clusters, total_number_of_clusters;
         char volume_name[100] = "";
         for(int i = 0; i < ret; i++){
-            if(test[i] != NULL){
+            if(test[i] != 0){
                 string_buffer[counter] = test[i];
                 counter++;
             }
@@ -99,7 +99,7 @@ namespace monitoring{
                 this->logical_disk.data[internal_counter].time = req_time;
                 this->logical_disk.data[internal_counter].last_time = this->logical_disk.data[i].time - std::chrono::seconds{1};
                 this->logical_disk.data[internal_counter].id.assign(string_buffer);
-                GetVolumeInformationA(string_buffer, volume_name, 99, NULL, NULL, NULL, NULL, NULL);
+                GetVolumeInformationA(string_buffer, volume_name, 99, NULL, NULL, NULL, NULL, 0);
                 this->logical_disk.data[internal_counter].volume_name.assign(volume_name);
                 GetDiskFreeSpaceA(string_buffer, &sectors_per_cluster, &bytes_per_sector, &number_of_free_clusters, &total_number_of_clusters);
                 this->logical_disk.data[internal_counter].total_space = ((long long) total_number_of_clusters * (long long) sectors_per_cluster * (long long) bytes_per_sector) / 1024;
@@ -116,7 +116,7 @@ namespace monitoring{
         int counter = 0;
         char string_buffer[20] = "";
         for(int i = 0; i < ret; i++){
-            if(test[i] == NULL){
+            if(test[i] == 0){
                 counter++;
             }
         }
@@ -125,9 +125,8 @@ namespace monitoring{
 
         counter = 0;
         DWORD sectors_per_cluster, bytes_per_sector, number_of_free_clusters, total_number_of_clusters;
-        char volume_name[100] = "";
         for(int i = 0; i < ret; i++){
-            if(test[i] != NULL){
+            if(test[i] != 0){
                 string_buffer[counter] = test[i];
                 counter++;
             }
