@@ -267,7 +267,7 @@ void *app_test_remote(void *_args){
 
     // create a socket linked to a specific transport service provider
     SOCKET fdsocket = socket(AF_INET, SOCK_STREAM, 0);
-    if(fdsocket == (long long unsigned int) -1){
+    if((long long unsigned int) fdsocket == (long long unsigned int) -1){
         // printf("socket creation failure: %s\n", strerror(WSAGetLastError()));
         printf("socket creation failure\n");
         exit(EXIT_FAILURE);
@@ -305,7 +305,7 @@ void *app_test_remote(void *_args){
     time = std::chrono::system_clock::now();
     while(1){
         clientSocket = accept(fdsocket, (SOCKADDR *) &clientAdress, &addrlen);
-        if(clientSocket != (long long unsigned int) -1){
+        if((long long unsigned int) clientSocket != (long long unsigned int) -1){
             char ip[16];
             inet_ntop(AF_INET, &(clientAdress.sin_addr), ip, 16);
             // printf("connexion: %s:%i\n", ip, clientAdress->sin_port);
