@@ -173,11 +173,10 @@ void *slave_connection_thread_env_level(void *_args){
     pthread_exit(NULL);
 }
 
-// void *app_connection_thread_env_level(void *_args){
+// void *app_test_local(void *_args){
 //     // thread_args *args = (thread_args*) _args;
 //     // monitoring::System *sys = args->sys;
 //     monitoring::Environment *env = (monitoring::Environment*) _args;
-//     std::chrono::duration<double, std::milli> duration;
 //     std::chrono::system_clock::time_point time;
     
 //     #ifdef _WIN64
@@ -185,31 +184,66 @@ void *slave_connection_thread_env_level(void *_args){
 //     WSAStartup(MAKEWORD(2, 0), &WSAData);
 //     #endif
 
-//     server::connection conn = server::SetUpAppConnection();
+//     // create a socket linked to a specific transport service provider
+//     SOCKET fdsocket = socket(AF_INET, SOCK_STREAM, 0);
+//     if(fdsocket == -1){
+//         // printf("socket creation failure: %s\n", strerror(WSAGetLastError()));
+//         printf("socket creation failure\n");
+//         exit(EXIT_FAILURE);
+//     }
 
-//     // SOCKADDR_IN cliaddr;
-//     socklen_t len = sizeof(conn.dest_addr);
-//     int n = 0;
+//     // Specify a transport address and a port for the server
+//     SOCKADDR_IN sin;
+//     sin.sin_addr.s_addr = INADDR_LOOPBACK;   // inet_addr(SIN_ADDR);
+//     // sin.sin_addr.s_addr = inet_addr("127.0.0.1");   // inet_addr(SIN_ADDR);
+//     sin.sin_family = AF_INET;
+//     sin.sin_port = htons(4148);
+
+//     // Associates a local address with a socket
+//     if(bind(fdsocket, (SOCKADDR *) &sin, sizeof(sin)) != 0){
+//         // printf("binding failure: %s\n", strerror(WSAGetLastError()));
+//         printf("binding failure\n");
+//         exit(EXIT_FAILURE);
+//     }
+
+//     // change socket state to listening
+//     if(listen(fdsocket, 3) != 0){
+//         // printf("listening failure: %s\n", strerror(WSAGetLastError()));
+//         printf("listening failure\n");
+//         exit(EXIT_FAILURE);
+//     }
+
+//     SOCKADDR_IN clientAdress;
+//     SOCKET clientSocket;
+
+//     socklen_t addrlen = sizeof(clientAdress);
 //     char buffer_string[10000] = "\0";
+//     std::string prefix = "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nAccess-Control-Allow-Origin: *\r\nContent-Length: ";
+//     // "%zu\r\n\r\n";
+//     std::string content;
 
 //     time = std::chrono::system_clock::now();
 //     while(1){
-//         // std::this_thread::sleep_for(std::chrono::milliseconds{500});
-//         duration = std::chrono::system_clock::now() - time;
-//         while(duration.count() < 500){
-//             std::this_thread::sleep_for(std::chrono::milliseconds{100});
-//             duration = std::chrono::system_clock::now() - time;
+//         clientSocket = accept(fdsocket, (SOCKADDR *) &clientAdress, &addrlen);
+//         if(clientSocket != -1){
+//             char ip[16];
+//             inet_ntop(AF_INET, &(clientAdress.sin_addr), ip, 16);
+//             // printf("connexion: %s:%i\n", ip, clientAdress->sin_port);
 //         }
-//         time = std::chrono::system_clock::now();
-//         // printf("ping\n");
-        
-//         // sys->update_info();
 
-//         n = recvfrom(conn.sockfd, (char *)buffer_string, 9999, 0, ( struct sockaddr *) &(conn.dest_addr), &len);
-//         if(n > 0){
-//             printf("%s\n", buffer_string);
-//         }
-//         sendto(conn.sockfd, (const char *) env->to_json().c_str(), strlen(env->to_json().c_str()), 0, (const struct sockaddr *) &(conn.dest_addr), len);
+//         // std::cout << env->to_json() << std::endl;
+//         recv(clientSocket, buffer_string, 9999, 0);
+//         // std::this_thread::sleep_for(std::chrono::milliseconds{1000});
+//         // std::cout << env->to_json() << std::endl;
+//         content = env->to_json();
+//         send(clientSocket, (prefix + std::to_string(content.length()) + "\r\n\r\n" + content).c_str(), (prefix + std::to_string(content.length()) + "\r\n\r\n" + content).length(), 0);
+
+//         #ifdef _WIN64
+//         closesocket(clientSocket);
+//         #endif
+//         #ifdef __linux__
+//         close(clientSocket);
+//         #endif
 //     }
 //     // free(args);
 
@@ -220,7 +254,7 @@ void *slave_connection_thread_env_level(void *_args){
 //     pthread_exit(NULL);
 // }
 
-void *app_test(void *_args){
+void *app_test_remote(void *_args){
     // thread_args *args = (thread_args*) _args;
     // monitoring::System *sys = args->sys;
     monitoring::Environment *env = (monitoring::Environment*) _args;
@@ -313,7 +347,9 @@ int test2(int argc, char** argv){
                                            true,
                                            true);
     
-    parser.add_argument("-ip --ip-addresses", "store", 1, NULL, "", "string", 0, NULL, false, "ip addresses file", NULL, NULL, 0);
+    parser.add_argument("-ip --ip-addresses", "store", 1, NULL, "", "string", 0, NULL, false, "IP addresses file", NULL, NULL, 0);
+    const char* choices1[3] = {"none", "local", "remote"};
+    parser.add_argument("-aa --app-access", "store", 1, NULL, "none", "string", 3, choices1, false, "Type of access for the app", NULL, NULL, 0);
 
     argparse::ParsedArguments* parsed_args = parser.parse_args(argc, argv);
 
@@ -324,6 +360,12 @@ int test2(int argc, char** argv){
         ip_addresses_file = "";
 
     std::vector<std::string> ip_addresses = get_ip_addresses(ip_addresses_file);
+
+    std::string app_access;
+    if(parsed_args->get_value_by_key("app-access")._string != NULL)
+        app_access = parsed_args->get_value_by_key("app-access")._string;
+    else
+        app_access = "";
 
     // parsed_args->print_keys_and_values();
     // std::cout << mode << " : " << ip_addresses.size() << std::endl;
@@ -356,8 +398,22 @@ int test2(int argc, char** argv){
         perror("could not create thread");
         return 1;
     }
-    if(pthread_create(&sniffer_thread_3, NULL, app_test, (void*) &env) < 0){
-        perror("could not create thread");
+    // if(app_access == "local"){
+    //     if(pthread_create(&sniffer_thread_3, NULL, app_test_local, (void*) &env) < 0){
+    //         perror("could not create thread");
+    //         return 1;
+    //     }
+    // }
+    else if(app_access == "remote"){
+        if(pthread_create(&sniffer_thread_3, NULL, app_test_remote, (void*) &env) < 0){
+            perror("could not create thread");
+            return 1;
+        }
+    }
+    else if(app_access == "none"){
+
+    }
+    else{
         return 1;
     }
 
