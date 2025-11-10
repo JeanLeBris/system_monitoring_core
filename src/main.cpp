@@ -196,7 +196,7 @@ void *app_test_local(void *_args){
     SOCKADDR_IN sin;
     sin.sin_addr.s_addr = htonl(INADDR_LOOPBACK);   // inet_addr(SIN_ADDR);
     sin.sin_family = AF_INET;
-    sin.sin_port = htons(4148);
+    sin.sin_port = htons(APP_PORT);
 
     // Associates a local address with a socket
     if(bind(fdsocket, (SOCKADDR *) &sin, sizeof(sin)) != 0){
@@ -276,7 +276,7 @@ void *app_test_remote(void *_args){
     SOCKADDR_IN sin;
     sin.sin_addr.s_addr = INADDR_ANY;   // inet_addr(SIN_ADDR);
     sin.sin_family = AF_INET;
-    sin.sin_port = htons(4148);
+    sin.sin_port = htons(APP_PORT);
 
     // Associates a local address with a socket
     if(bind(fdsocket, (SOCKADDR *) &sin, sizeof(sin)) != 0){
