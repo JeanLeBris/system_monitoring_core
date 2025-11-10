@@ -173,86 +173,85 @@ void *slave_connection_thread_env_level(void *_args){
     pthread_exit(NULL);
 }
 
-// void *app_test_local(void *_args){
-//     // thread_args *args = (thread_args*) _args;
-//     // monitoring::System *sys = args->sys;
-//     monitoring::Environment *env = (monitoring::Environment*) _args;
-//     std::chrono::system_clock::time_point time;
+void *app_test_local(void *_args){
+    // thread_args *args = (thread_args*) _args;
+    // monitoring::System *sys = args->sys;
+    monitoring::Environment *env = (monitoring::Environment*) _args;
+    std::chrono::system_clock::time_point time;
     
-//     #ifdef _WIN64
-//     WSADATA WSAData;
-//     WSAStartup(MAKEWORD(2, 0), &WSAData);
-//     #endif
+    #ifdef _WIN64
+    WSADATA WSAData;
+    WSAStartup(MAKEWORD(2, 0), &WSAData);
+    #endif
 
-//     // create a socket linked to a specific transport service provider
-//     SOCKET fdsocket = socket(AF_INET, SOCK_STREAM, 0);
-//     if(fdsocket == -1){
-//         // printf("socket creation failure: %s\n", strerror(WSAGetLastError()));
-//         printf("socket creation failure\n");
-//         exit(EXIT_FAILURE);
-//     }
+    // create a socket linked to a specific transport service provider
+    SOCKET fdsocket = socket(AF_INET, SOCK_STREAM, 0);
+    if((long long unsigned int) fdsocket == (long long unsigned int) -1){
+        // printf("socket creation failure: %s\n", strerror(WSAGetLastError()));
+        printf("socket creation failure\n");
+        exit(EXIT_FAILURE);
+    }
 
-//     // Specify a transport address and a port for the server
-//     SOCKADDR_IN sin;
-//     sin.sin_addr.s_addr = INADDR_LOOPBACK;   // inet_addr(SIN_ADDR);
-//     // sin.sin_addr.s_addr = inet_addr("127.0.0.1");   // inet_addr(SIN_ADDR);
-//     sin.sin_family = AF_INET;
-//     sin.sin_port = htons(4148);
+    // Specify a transport address and a port for the server
+    SOCKADDR_IN sin;
+    sin.sin_addr.s_addr = htonl(INADDR_LOOPBACK);   // inet_addr(SIN_ADDR);
+    sin.sin_family = AF_INET;
+    sin.sin_port = htons(4148);
 
-//     // Associates a local address with a socket
-//     if(bind(fdsocket, (SOCKADDR *) &sin, sizeof(sin)) != 0){
-//         // printf("binding failure: %s\n", strerror(WSAGetLastError()));
-//         printf("binding failure\n");
-//         exit(EXIT_FAILURE);
-//     }
+    // Associates a local address with a socket
+    if(bind(fdsocket, (SOCKADDR *) &sin, sizeof(sin)) != 0){
+        // printf("binding failure: %s\n", strerror(WSAGetLastError()));
+        printf("binding failure\n");
+        exit(EXIT_FAILURE);
+    }
 
-//     // change socket state to listening
-//     if(listen(fdsocket, 3) != 0){
-//         // printf("listening failure: %s\n", strerror(WSAGetLastError()));
-//         printf("listening failure\n");
-//         exit(EXIT_FAILURE);
-//     }
+    // change socket state to listening
+    if(listen(fdsocket, 3) != 0){
+        // printf("listening failure: %s\n", strerror(WSAGetLastError()));
+        printf("listening failure\n");
+        exit(EXIT_FAILURE);
+    }
 
-//     SOCKADDR_IN clientAdress;
-//     SOCKET clientSocket;
+    SOCKADDR_IN clientAdress;
+    SOCKET clientSocket;
 
-//     socklen_t addrlen = sizeof(clientAdress);
-//     char buffer_string[10000] = "\0";
-//     std::string prefix = "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nAccess-Control-Allow-Origin: *\r\nContent-Length: ";
-//     // "%zu\r\n\r\n";
-//     std::string content;
+    socklen_t addrlen = sizeof(clientAdress);
+    char buffer_string[10000] = "\0";
+    std::string prefix = "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nAccess-Control-Allow-Origin: *\r\nContent-Length: ";
+    // "%zu\r\n\r\n";
+    std::string content;
 
-//     time = std::chrono::system_clock::now();
-//     while(1){
-//         clientSocket = accept(fdsocket, (SOCKADDR *) &clientAdress, &addrlen);
-//         if(clientSocket != -1){
-//             char ip[16];
-//             inet_ntop(AF_INET, &(clientAdress.sin_addr), ip, 16);
-//             // printf("connexion: %s:%i\n", ip, clientAdress->sin_port);
-//         }
+    time = std::chrono::system_clock::now();
+    while(1){
+        clientSocket = accept(fdsocket, (SOCKADDR *) &clientAdress, &addrlen);
+        if((long long unsigned int) clientSocket != (long long unsigned int) -1){
+            char ip[16];
+            inet_ntop(AF_INET, &(clientAdress.sin_addr), ip, 16);
+            // printf("connexion: %s:%i\n", ip, clientAdress->sin_port);
+        }
 
-//         // std::cout << env->to_json() << std::endl;
-//         recv(clientSocket, buffer_string, 9999, 0);
-//         // std::this_thread::sleep_for(std::chrono::milliseconds{1000});
-//         // std::cout << env->to_json() << std::endl;
-//         content = env->to_json();
-//         send(clientSocket, (prefix + std::to_string(content.length()) + "\r\n\r\n" + content).c_str(), (prefix + std::to_string(content.length()) + "\r\n\r\n" + content).length(), 0);
+        // std::cout << env->to_json() << std::endl;
+        recv(clientSocket, buffer_string, 9999, 0);
+        // std::this_thread::sleep_for(std::chrono::milliseconds{1000});
+        // std::cout << env->to_json() << std::endl;
+        content = env->to_json();
+        send(clientSocket, (prefix + std::to_string(content.length()) + "\r\n\r\n" + content).c_str(), (prefix + std::to_string(content.length()) + "\r\n\r\n" + content).length(), 0);
 
-//         #ifdef _WIN64
-//         closesocket(clientSocket);
-//         #endif
-//         #ifdef __linux__
-//         close(clientSocket);
-//         #endif
-//     }
-//     // free(args);
+        #ifdef _WIN64
+        closesocket(clientSocket);
+        #endif
+        #ifdef __linux__
+        close(clientSocket);
+        #endif
+    }
+    // free(args);
 
-//     #ifdef _WIN64
-//     WSACleanup();
-//     #endif
+    #ifdef _WIN64
+    WSACleanup();
+    #endif
     
-//     pthread_exit(NULL);
-// }
+    pthread_exit(NULL);
+}
 
 void *app_test_remote(void *_args){
     // thread_args *args = (thread_args*) _args;
@@ -398,12 +397,12 @@ int test2(int argc, char** argv){
         perror("could not create thread");
         return 1;
     }
-    // if(app_access == "local"){
-    //     if(pthread_create(&sniffer_thread_3, NULL, app_test_local, (void*) &env) < 0){
-    //         perror("could not create thread");
-    //         return 1;
-    //     }
-    // }
+    if(app_access == "local"){
+        if(pthread_create(&sniffer_thread_3, NULL, app_test_local, (void*) &env) < 0){
+            perror("could not create thread");
+            return 1;
+        }
+    }
     else if(app_access == "remote"){
         if(pthread_create(&sniffer_thread_3, NULL, app_test_remote, (void*) &env) < 0){
             perror("could not create thread");
